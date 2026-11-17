@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A.I. This Week Films 2026-11-17</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root{ --ink:#070B16; --text:#E9EEF8; --dim:#8492B0; --amber:#FFB547; --line:#2B3A66;
+  --display:"Bricolage Grotesque","Arial Narrow",Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace; color-scheme:dark }
+/* layout: a single letterboxed canvas; a programme card sits over it until a film is chosen */
+html,body{height:100%;margin:0;background:#000;overflow:hidden}
+#app{position:fixed;inset:0;display:grid;place-items:center;background:#000}
+#app.idle{cursor:none}
+#film{display:block;background:var(--ink)}
+#poster,#again{position:absolute;inset:0;display:grid;place-items:center;color:var(--text)}
+#poster{background:radial-gradient(ellipse at 30% 40%,#16224a 0%,#070B16 62%);overflow:auto}
+#poster[hidden],#again[hidden]{display:none}
+.prog{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,5vw,90px);align-items:center;width:min(1500px,calc(100% - 48px));padding:24px 0}
+.prog .k{font:600 clamp(11px,1.1vw,20px)/1 var(--mono);letter-spacing:.3em;color:var(--dim);margin-bottom:2vh}
+.prog h1{font:800 clamp(44px,7.4vw,140px)/.95 var(--display);margin:0;letter-spacing:-.02em;text-wrap:balance}
+.prog p{font:600 clamp(12px,1.25vw,22px)/1.5 var(--mono);color:var(--dim);margin:2.4vh 0 3.6vh}
+button{font:inherit;color:inherit;cursor:pointer}
+#play{font:800 clamp(16px,1.9vw,32px)/1 var(--display);padding:.75em 1.5em;border:0;border-radius:10px;background:var(--amber);color:#1A1206}
+button:focus-visible{outline:3px solid #fff;outline-offset:4px}
+button:disabled{opacity:.6;cursor:default}
+.prog small{display:block;margin-top:3vh;font:500 clamp(10px,.95vw,16px)/1.6 var(--mono);color:var(--dim)}
+#films{display:grid;gap:0}
+.chap{display:grid;grid-template-columns:2.4em 1fr auto;gap:.9em;align-items:baseline;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:.72em .2em;font:800 clamp(16px,2.1vw,38px)/1.1 var(--display)}
+.chap:last-child{border-bottom:1px solid var(--line)}
+.chap:hover:not(:disabled) b{color:var(--amber)}
+.chap i{font:600 .5em/1 var(--mono);font-style:normal;color:var(--amber)}
+.chap span{font:500 .5em/1 var(--mono);color:var(--dim);font-variant-numeric:tabular-nums}
+#again{background:rgba(4,6,12,.55)}
+#againbtn{font:800 clamp(16px,1.9vw,32px)/1 var(--display);padding:.75em 1.5em;border:0;border-radius:10px;background:var(--amber);color:#1A1206}
+@media (max-width:760px){.prog{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="film" width="1920" height="1080"></canvas>
+  <div id="poster"><div class="prog">
+    <div>
+      <div class="k">THE FILM EDITION</div>
+      <h1>A.I. This Week</h1>
+      <p>November 10 – 16, 2026 · ACG 6415 · <span id="runtime"></span> · sound on</p>
+      <button id="play" type="button">Play from the start</button>
+      <small>Space: play or pause · ← →: back or forward five seconds · ↑ ↓: previous or next film · F: full screen<br>Or pick a film on the right.</small>
+    </div>
+    <div id="films"></div>
+  </div></div>
+  <div id="again" hidden><button type="button" id="againbtn">Play again</button></div>
+</div>
+<script>window.EDITION = {"title": "A.I. This Week", "label": "November 10 – 16, 2026 · ACG 6415", "items": [{"type": "open"}, {"type": "film", "id": "jensen"}, {"type": "film", "id": "fingerprints"}, {"type": "film", "id": "roadshow"}, {"type": "film", "id": "after2027"}, {"type": "take", "audio": "audio/takes/rec_56b4b7dee16d.mp3", "dur": 24.36, "line": "A forecast is a model. Ask what has to be true.", "who": "Professor Hornik", "about": "2027 After All?"}, {"type": "film", "id": "meeting"}, {"type": "take", "audio": "audio/takes/rec_55ebf92290e4.mp3", "dur": 21.89, "line": "The agent can now approve, record and pay. Which of those would you separate?", "who": "Professor Hornik", "about": "In the Meeting"}, {"type": "film", "id": "checked"}, {"type": "end"}], "films": {"jensen": {"title": "Jensen Is Out", "beats": [{"id": "cards", "text": "In 2012, the first great neural network was trained on two graphics cards made for video games. The company that made them was Nvidia.", "audio": "audio/jensen/cards_2d3b9f837c7c.mp3", "start": 1.6, "dur": 9.41}, {"id": "bet", "text": "Its founder, Jensen Huang, saw what that meant before almost anyone, and bet the company on it. Today nearly every frontier AI model is trained on Nvidia chips.", "audio": "audio/jensen/bet_ffb2a0724ee1.mp3", "start": 11.56, "dur": 10.8}, {"id": "out", "text": "Last Thursday, after thirty-three years, he resigned, effective immediately. The company gave no reason.", "audio": "audio/jensen/out_d514b799a0f8.mp3", "start": 22.91, "dur": 7.25}, {"id": "why", "text": "Days earlier he had publicly admitted to an affair. The board had opened a review of whether he was a target of Chinese intelligence. Beijing calls that claim baseless, and the board says it has no reason to believe national security was compromised.", "audio": "audio/jensen/why_5ec35b31b9b8.mp3", "start": 30.71, "dur": 15.86}, {"id": "drop", "text": "Since its record in October, the stock has lost about thirty percent. One point seven trillion dollars.", "audio": "audio/jensen/drop_48745bf12d37.mp3", "start": 47.12, "dur": 7.06}, {"id": "next", "text": "The chief financial officer, Colette Kress, is running the company for now. Nvidia has its first board chair. And it reports earnings today.", "audio": "audio/jensen/next_2a76b5225e80.mp3", "start": 54.73, "dur": 9.31}, {"id": "close", "text": "For thirty-three years, one man was the strategy, the salesman, and the voice in Washington. Every annual report warns about depending on a founder. This is what that sentence looks like when it comes true.", "audio": "audio/jensen/close_c61be7cccb14.mp3", "start": 64.59, "dur": 12.55}], "total": 80.19, "bed": "audio/jensen/bed.mp3"}, "fingerprints": {"title": "Fingerprints", "beats": [{"id": "file", "text": "China's AI labs give their best models away. Anyone can download one. It is a single enormous file of numbers.", "audio": "audio/fingerprints/file_87376e3ab674.mp3", "start": 1.6, "dur": 9.0}, {"id": "dice", "text": "Billions of them. And before the model learned anything, every one of those numbers was a roll of the dice.", "audio": "audio/fingerprints/dice_02c3c8e6befa.mp3", "start": 11.15, "dur": 8.71}, {"id": "chip", "text": "But computers don't really roll dice. The chip that fills in those numbers leaves a pattern. A different chip, a different pattern.", "audio": "audio/fingerprints/chip_db8d7ca9d0b2.mp3", "start": 20.41, "dur": 7.97}, {"id": "print", "text": "Training changes the numbers. It doesn't erase the pattern. It is still there, in the file the lab published.", "audio": "audio/fingerprints/print_87588181d5b3.mp3", "start": 28.93, "dur": 6.46}, {"id": "search", "text": "Last week a former OpenAI researcher, Will Depue, went looking for it. He tried six trillion combinations of chip and starting seed.", "audio": "audio/fingerprints/search_fe0062ef26d4.mp3", "start": 35.94, "dur": 9.17}, {"id": "match", "text": "Six models matched. All six pointed to the same family of chip: Blackwell. Nvidia's newest. The one that cannot legally be sold to China.", "audio": "audio/fingerprints/match_fdba72a077a9.mp3", "start": 45.66, "dur": 10.06}, {"id": "bench", "text": "He ran the test on a real one. It rebuilt a DeepSeek model's starting numbers exactly. An older chip rebuilt none. And wherever labs have named their hardware, the fingerprint was right. Twenty-four out of twenty-four.", "audio": "audio/fingerprints/bench_858e8d3ed0d2.mp3", "start": 56.27, "dur": 13.32}, {"id": "where", "text": "Here is what the fingerprint cannot tell you: where that chip was sitting. Inside China, the export ban was broken. Rented in another country, it may be legal.", "audio": "audio/fingerprints/where_f7b8f25f5727.mp3", "start": 70.14, "dur": 11.26}, {"id": "close", "text": "No leak. No insider. The evidence was in the file the whole time.", "audio": "audio/fingerprints/close_863e9829e1d6.mp3", "start": 81.95, "dur": 5.16}], "total": 90.16, "bed": "audio/fingerprints/bed.mp3"}, "roadshow": {"title": "The Roadshow", "beats": [{"id": "price", "text": "This Thursday, Anthropic is expected to start trading on the Nasdaq. Seventy to seventy-eight dollars a share.", "audio": "audio/roadshow/price_9324499e76d1.mp3", "start": 1.6, "dur": 6.55}, {"id": "raise", "text": "At the top of that range it would raise about sixty-four billion dollars, and be valued at as much as one point four trillion.", "audio": "audio/roadshow/raise_8491b77a0c57.mp3", "start": 8.7, "dur": 7.85}, {"id": "table", "text": "Now read down the page. Third-quarter revenue: seventeen billion dollars, up more than twelve times in a year. Net loss: twenty-three billion. But almost twenty-two billion of that is a non-cash charge, tied to the company's own rising valuation.", "audio": "audio/roadshow/table_a7081f2260d6.mp3", "start": 17.1, "dur": 15.6}, {"id": "slide", "text": "The roadshow video has a slide that stopped people. A curve showing how much less computing it takes to train a model, bending upward. A former employee wrote that the slide was a big factor in the decision to leave.", "audio": "audio/roadshow/slide_49e872030ca5.mp3", "start": 33.25, "dur": 14.95}, {"id": "foot", "text": "Then someone read the footnote. The placement of the data points on the graph, it says, is solely for illustrative purposes.", "audio": "audio/roadshow/foot_64465cccb981.mp3", "start": 48.75, "dur": 7.85}, {"id": "close", "text": "None of this is hidden. The loss, the adjustment, the footnote: all of it is disclosed. The skill is in the reading.", "audio": "audio/roadshow/close_1a4319808a48.mp3", "start": 57.15, "dur": 9.17}], "total": 69.37, "bed": "audio/roadshow/bed.mp3"}, "after2027": {"title": "2027 After All?", "beats": [{"id": "line", "text": "Draw a line for how fast AI is getting better. For years it has climbed at a steady pace.", "audio": "audio/after2027/line_6471e135cf4c.mp3", "start": 1.6, "dur": 7.25}, {"id": "kink", "text": "Earlier this month, outside auditors looked inside one lab, Anthropic, and found a bend. Progress there is running about twice as fast as it was. And most of that, they said, is AI doing the research.", "audio": "audio/after2027/kink_c23dc892ff17.mp3", "start": 9.4, "dur": 14.81}, {"id": "extend", "text": "Forecasters took that bend and kept drawing. If AI speeds up AI research, the line doesn't just climb. It curls upward.", "audio": "audio/after2027/extend_cb9b376abbc0.mp3", "start": 24.76, "dur": 9.72}, {"id": "date", "text": "Last week the authors of the forecast called AI 2027 moved their date. All six now expect an AI that out-researches the best humans in 2027. One of them wrote: I am scared, sad, and angry.", "audio": "audio/after2027/date_7992e269abe1.mp3", "start": 35.03, "dur": 17.11}, {"id": "ask", "text": "Then a philosopher, David Chalmers, asked a plain question. How, exactly, does twice as fast get you there?", "audio": "audio/after2027/ask_18cc5a1c8c70.mp3", "start": 52.69, "dur": 8.76}, {"id": "strands", "text": "Suppose the line is really two. An easy part: writing code, running experiments. And a hard part: knowing which experiment is worth running. The easy part can explode while the hard part barely moves.", "audio": "audio/after2027/strands_d13191b5449d.mp3", "start": 62.0, "dur": 12.55}, {"id": "sub", "text": "He calls that a sub-explosion. Fast, and real, and still short of the machine the forecasts describe.", "audio": "audio/after2027/sub_312e85fde14c.mp3", "start": 75.1, "dur": 7.15}, {"id": "wide", "text": "Now pull back far enough to see every lab at once. One analyst says the line looks the way it always has. What changed is who is in front.", "audio": "audio/after2027/wide_627ab81914b4.mp3", "start": 82.8, "dur": 9.26}, {"id": "close", "text": "Same evidence. Three ways to draw the line. Before you believe a forecast, find the assumption holding it up.", "audio": "audio/after2027/close_30b45b33dad8.mp3", "start": 92.61, "dur": 7.1}], "total": 102.76, "bed": "audio/after2027/bed.mp3"}, "meeting": {"title": "In the Meeting", "beats": [{"id": "chat", "text": "For three years the assistant lived in a chat window. You went to it.", "audio": "audio/meeting/chat_609b2c9f562b.mp3", "start": 1.6, "dur": 4.85}, {"id": "room", "text": "Last week it moved in. On Tuesday, Anthropic gave Claude a spreadsheet and a whiteboard. On Thursday, a seat in the meeting. It joins the video call, takes the notes, and builds the document while people are still talking.", "audio": "audio/meeting/room_cafda288032a.mp3", "start": 7.0, "dur": 15.96}, {"id": "store", "text": "OpenAI opened a storefront. A business can now claim its profile inside ChatGPT, and put an agent on the counter to answer customers.", "audio": "audio/meeting/store_fdce607f4458.mp3", "start": 23.51, "dur": 8.9}, {"id": "wallet", "text": "On Friday it got a wallet. The agent can complete a purchase for you, with your approval each time, without ever seeing your card number.", "audio": "audio/meeting/wallet_2d70a80f8048.mp3", "start": 32.96, "dur": 9.05}, {"id": "search", "text": "And Google switched its newest fast model on for everyone who uses Search.", "audio": "audio/meeting/search_0cb491cf5318.mp3", "start": 42.56, "dur": 6.91}, {"id": "close", "text": "Put the week together. The assistant sits in the meeting. It keeps the books. It runs the counter. It holds the means to pay. Each of those used to be a different person.", "audio": "audio/meeting/close_b25a538db08f.mp3", "start": 50.02, "dur": 10.75}], "total": 63.82, "bed": "audio/meeting/bed.mp3"}, "checked": {"title": "Checked by Machine", "beats": [{"id": "signal", "text": "Your encrypted messages may run on a system called Signal. Last week, Google DeepMind's AI wrote six million lines of mathematical proof that Signal's working code keeps its promises.", "audio": "audio/checked/signal_5402b21070eb.mp3", "start": 1.6, "dur": 12.72}, {"id": "test", "text": "Five people did it in about a month. They read the one percent that mattered. And to test the tester, they put two old bugs back in. It caught both.", "audio": "audio/checked/test_dc95c6cc3443.mp3", "start": 14.87, "dur": 10.75}, {"id": "frank", "text": "A Stanford psychologist, Michael Frank, turned the same kind of tool on himself. Fifty-eight of his own papers. Forty had at least one number that could not be reproduced. He published the results.", "audio": "audio/checked/frank_d71b4dcb76c6.mp3", "start": 26.17, "dur": 13.01}, {"id": "audit", "text": "And two weeks ago, an AI audit claimed serious flaws in the work of two famous economists. Now that audit has been audited. Of a hundred forty-seven flags, the facts held up in a hundred thirty-one, and none were wrong.", "audio": "audio/checked/audit_6e40f181e67c.mp3", "start": 39.73, "dur": 16.06}, {"id": "but", "text": "But only twenty-one change a headline number. Ninety-eight are arguments about method.", "audio": "audio/checked/but_c0a212b6aa4c.mp3", "start": 56.34, "dur": 5.35}, {"id": "close", "text": "The machine had its facts right, and its adjectives wrong. A finding and a judgment are not the same thing.", "audio": "audio/checked/close_cbba8e05e267.mp3", "start": 62.24, "dur": 7.92}], "total": 73.21, "bed": "audio/checked/bed.mp3"}}, "sting_in": "audio/sting_in.mp3", "sting_out": "audio/sting_out.mp3"};</script>
+<script>
+// filmkit v2 — an EDITION is a sequence of items on one clock: an opening card, films, professor's takes, an end card.
+// Each film is a scene defined with Film.define(id, kit => ({ draw, over, score })): one canvas, one moving camera,
+// a picture that is a pure function of its own local time. ?t=SECONDS (optionally &film=ID) renders a still.
+(function () {
+  const ED = window.EDITION, W = 1920, H = 1080, BAR = 96;
+  const cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)), seg = (t, a, d) => cl((t - a) / d);
+  const eio = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2, eo = (x) => 1 - Math.pow(1 - x, 3), lerp = (a, b, p) => a + (b - a) * p;
+  const rnd = (i, k) => { const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return x - Math.floor(x); };
+  const norm = (w) => w.toLowerCase().replace(/’/g, "'").replace(/[^a-z0-9']+/g, '');
+  const C = { bg: '#070B16', card: '#0F172B', line: '#2B3A66', text: '#E9EEF8', dim: '#8492B0', blue: '#6D8BFF', amber: '#FFB547', green: '#51D6A0', red: '#FF6B6B', violet: '#C58BFF', paper: '#F3F0E8', ink: '#141A2B' };
+  const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace', DISP = '"Bricolage Grotesque", "Arial Narrow", Arial, sans-serif', SERIF = '"Source Serif 4", Georgia, "Times New Roman", serif';
+  function wordTimes(text, dur) { const ws = text.split(/\s+/), wt = ws.map((w) => w.length + 1.5 + (/[.?!]["”’)]?$/.test(w) ? 7 : /[,;:]$/.test(w) ? 3 : 0)), tot = wt.reduce((a, b) => a + b, 0), span = Math.max(0.1, dur - 0.37); let acc = 0; return ws.map((w, i) => { const t = 0.12 + span * acc / tot; acc += wt[i]; return [w, t]; }); }
+  function camera(K, T) { // keyframes [t, x, y, zoom]; zoom moves exponentially and the higher-zoom end is the focus, so a dive never loses its target
+    let i = 0; while (i < K.length - 2 && T >= K[i + 1][0]) i++;
+    const A = K[i], Bk = K[i + 1], p0 = eio(seg(T, A[0], Bk[0] - A[0])), hiB = Bk[3] >= A[3], lo = hiB ? A : Bk, hi = hiB ? Bk : A, p = hiB ? p0 : 1 - p0;
+    const z = Math.exp(lerp(Math.log(lo[3]), Math.log(hi[3]), p)), sx = (hi[1] - lo[1]) * lo[3] * (1 - p), sy = (hi[2] - lo[2]) * lo[3] * (1 - p);
+    return { x: hi[1] - sx / z + Math.sin(T * 0.31) * 7 / z, y: hi[2] - sy / z + Math.cos(T * 0.23) * 5 / z, z: z * (1 + 0.012 * Math.sin(T * 0.17)) };
+  }
+  function synth(ac, gain) { // building blocks for a score written in code
+    const out = ac.createGain(), master = ac.createGain(); master.gain.value = gain; out.connect(master).connect(ac.destination);
+    const tone = (at, f, dur, o) => { o = o || {}; const os = ac.createOscillator(), gn = ac.createGain(); os.type = o.type || 'sine'; os.frequency.setValueAtTime(f, at); if (o.f1) os.frequency.exponentialRampToValueAtTime(o.f1, at + dur); if (o.det) os.detune.value = o.det; const a = o.a == null ? 0.01 : o.a, r = o.r == null ? 0.15 : o.r, gv = o.g || 0.1; gn.gain.setValueAtTime(0.0001, at); gn.gain.linearRampToValueAtTime(gv, at + a); gn.gain.setValueAtTime(gv, Math.max(at + a, at + dur - r)); gn.gain.linearRampToValueAtTime(0.0001, at + dur); let node = os.connect(gn); if (o.lp) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = o.lp; node = gn.connect(fl); } node.connect(out); os.start(at); os.stop(at + dur + 0.05); };
+    const nbuf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate), nd = nbuf.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = rnd(i, 11) * 2 - 1;
+    const noise = (at, dur, o) => { o = o || {}; const sr = ac.createBufferSource(), fl = ac.createBiquadFilter(), gn = ac.createGain(); sr.buffer = nbuf; sr.loop = true; fl.type = o.type || 'bandpass'; fl.Q.value = o.q || 0.8; fl.frequency.setValueAtTime(o.f0 || 800, at); if (o.f1) fl.frequency.exponentialRampToValueAtTime(o.f1, at + dur); const pk = o.pk == null ? 0.6 : o.pk, gv = o.g || 0.1; gn.gain.setValueAtTime(0.0001, at); gn.gain.linearRampToValueAtTime(gv, at + dur * pk); gn.gain.linearRampToValueAtTime(0.0001, at + dur); sr.connect(fl).connect(gn).connect(out); sr.start(at, (at * 0.37) % 1.5); sr.stop(at + dur + 0.05); };
+    const pad = (notes, st, en, g) => notes.forEach((f) => { tone(st, f, en - st, { type: 'triangle', g: g || 0.03, a: 2.2, r: 2.4, det: -5, lp: 900 }); tone(st, f, en - st, { type: 'triangle', g: g || 0.03, a: 2.2, r: 2.4, det: 6, lp: 900 }); tone(st, f * 2, en - st, { g: (g || 0.03) * 0.27, a: 3, r: 2.4 }); });
+    const whoosh = (at, dur, up, g) => noise(at, dur, up ? { f0: 260, f1: 3600, g: g || 0.08 } : { f0: 3200, f1: 200, g: g || 0.08, pk: 0.3 });
+    const thunk = (at) => { noise(at, 0.28, { type: 'lowpass', f0: 240, g: 0.3, pk: 0.05 }); tone(at, 72, 0.35, { g: 0.22, a: 0.004, r: 0.3 }); };
+    const bell = (at, f, g) => { tone(at, f, 1.3, { g: g || 0.06, a: 0.004, r: 1.2 }); tone(at, f * 1.5, 1.1, { g: (g || 0.06) * 0.55, a: 0.004, r: 1.0 }); };
+    return { tone, noise, pad, whoosh, thunk, bell };
+  }
+  // drawing tools bound to a canvas and a camera: world coordinates in, screen pixels out
+  function tools(g, c) {
+    const X = (x) => W / 2 + (x - c.x) * c.z, Y = (y) => H / 2 + (y - c.y) * c.z, S = (l) => l * c.z;
+    const text = (font, wt) => (s, x, y, size, color, al, alpha) => { const px = S(size); if (px < 6 || alpha <= 0.01) return; g.globalAlpha = alpha == null ? 1 : alpha; g.font = wt + ' ' + px + 'px ' + font; g.fillStyle = color; g.textAlign = al || 'center'; g.textBaseline = 'middle'; g.fillText(s, X(x), Y(y)); g.globalAlpha = 1; };
+    const rr = (x, y, w, h, r, fill, stroke, lw, alpha) => { if (alpha != null && alpha <= 0.01) return; g.globalAlpha = alpha == null ? 1 : alpha; g.beginPath(); g.roundRect(X(x), Y(y), S(w), S(h), Math.min(S(r), S(Math.min(w, h)) / 2)); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw || 2; g.stroke(); } g.globalAlpha = 1; };
+    const path = (fn, xa, xz, step, color, lw, alpha, dash) => { if (xz <= xa || alpha <= 0.01) return; const lo = Math.max(xa, c.x - W / c.z), hi = Math.min(xz, c.x + W / c.z); if (hi <= lo) return; g.globalAlpha = alpha; g.strokeStyle = color; g.lineWidth = lw; g.lineJoin = 'round'; g.lineCap = 'round'; g.setLineDash(dash || []); g.beginPath(); g.moveTo(X(lo), Y(fn(lo))); for (let x = lo + step; x < hi; x += step) g.lineTo(X(x), Y(fn(x))); g.lineTo(X(hi), Y(fn(hi))); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; };
+    const line = (x1, y1, x2, y2, color, lw, alpha, dash) => { if (alpha <= 0.01) return; g.globalAlpha = alpha == null ? 1 : alpha; g.strokeStyle = color; g.lineWidth = lw || 2; g.setLineDash(dash || []); g.beginPath(); g.moveTo(X(x1), Y(y1)); g.lineTo(X(x2), Y(y2)); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; };
+    const dot = (x, y, r, color, alpha) => { if (alpha <= 0.01) return; g.globalAlpha = alpha == null ? 1 : alpha; g.beginPath(); g.arc(X(x), Y(y), Math.max(1, S(r)), 0, 6.2832); g.fillStyle = color; g.fill(); g.globalAlpha = 1; };
+    const stamp = (s, x, y, size, color, p, rot) => { if (p <= 0.01) return; g.save(); g.translate(X(x), Y(y)); g.rotate(rot == null ? -0.09 : rot); const sc = 2.3 - 1.3 * p; g.scale(sc, sc); g.globalAlpha = p; g.font = '800 ' + S(size) + 'px ' + DISP; const w = g.measureText(s).width + S(size) * 0.9, h = S(size) * 1.5; g.strokeStyle = color; g.lineWidth = 5; g.beginPath(); g.roundRect(-w / 2, -h / 2, w, h, 12); g.stroke(); g.fillStyle = color; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(s, 0, S(size) * 0.05); g.restore(); g.globalAlpha = 1; };
+    const chip = (x, y, size, alpha, kind, glow, T) => { if (alpha <= 0.01) return; const s = S(size), px = X(x), py = Y(y), n = kind === 'old' ? 7 : 9; g.globalAlpha = alpha; g.strokeStyle = kind === 'old' ? '#5B6884' : C.blue; g.lineWidth = Math.max(1.5, s * 0.022); for (let i = 0; i < n; i++) { const o = -s / 2 + s * (i + 0.5) / n; g.beginPath(); g.moveTo(px + o, py - s / 2); g.lineTo(px + o, py - s * 0.62); g.moveTo(px + o, py + s / 2); g.lineTo(px + o, py + s * 0.62); g.moveTo(px - s / 2, py + o); g.lineTo(px - s * 0.62, py + o); g.moveTo(px + s / 2, py + o); g.lineTo(px + s * 0.62, py + o); g.stroke(); } g.beginPath(); g.roundRect(px - s / 2, py - s / 2, s, s, s * 0.09); g.fillStyle = '#121C36'; g.fill(); g.stroke(); g.beginPath(); g.roundRect(px - s * 0.24, py - s * 0.24, s * 0.48, s * 0.48, s * 0.05); g.fillStyle = glow ? C.amber : (kind === 'old' ? '#3A4560' : C.blue); g.globalAlpha = alpha * (0.6 + 0.25 * Math.sin((T || 0) * 3.1)); g.fill(); g.globalAlpha = 1; };
+    const room = (color, r) => { g.fillStyle = C.bg; g.fillRect(0, 0, W, H); const sp = g.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, r || 1150); sp.addColorStop(0, color || 'rgba(58,74,150,0.30)'); sp.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = sp; g.fillRect(0, 0, W, H); };
+    return { X, Y, S, mono: text(MONO, 600), disp: text(DISP, 800), serif: text(SERIF, 600), rr, path, line, dot, stamp, chip, room };
+  }
+  // screen-space furniture shared by every film
+  function title(g, T, s) { const a = seg(T, 0.15, 0.5) * (1 - seg(T, 2.3, 0.9)); if (a <= 0.01) return; g.globalAlpha = a; g.fillStyle = C.text; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '800 150px ' + DISP; g.fillText(s, W / 2, H / 2 - 10); g.font = '600 24px ' + MONO; g.fillStyle = C.dim; g.fillText('A . I .   T H I S   W E E K', W / 2, H / 2 + 100); g.globalAlpha = 1; }
+  function sup(g, T, at, len, big, small, low) { const a = seg(T, at, 0.4) * (1 - seg(T, at + len, 0.5)); if (a <= 0.01) return; const y0 = low ? H - BAR - 122 : BAR + 44; g.globalAlpha = a; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = C.amber; g.fillRect(120, y0, 6, 78); g.font = '800 46px ' + DISP; g.fillStyle = C.text; g.fillText(big, 146, y0 + 36); g.font = '600 22px ' + MONO; g.fillStyle = C.dim; g.fillText(small, 146, y0 + 70); g.globalAlpha = 1; }
+  function credit(g, T, at, s, low) { const a = seg(T, at, 0.8); if (a <= 0.01) return; g.globalAlpha = a; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = '600 20px ' + MONO; g.fillStyle = C.dim; g.fillText(s, 120, low ? H - BAR - 40 : BAR + 60); g.globalAlpha = 1; }
+
+  const defs = {}, items = []; let total = 0;
+  function makeKit(V) {
+    const B = {}; V.beats.forEach((b) => { b.words = wordTimes(b.text, b.dur); b.end = b.start + b.dur; B[b.id] = b; });
+    const cue = (id, phrase) => { const b = B[id], pw = phrase.split(/\s+/).map(norm).filter(Boolean), nw = b.words.map((w) => norm(w[0])); for (let i = 0; i <= nw.length - pw.length; i++) { let ok = true; for (let j = 0; j < pw.length; j++) if (nw[i + j] !== pw[j]) { ok = false; break; } if (ok) return b.start + b.words[i][1] - 0.12; } console.warn('cue not found', id, phrase); return b.start; };
+    return { V, B, W, H, BAR, C, MONO, DISP, SERIF, cl, seg, eio, eo, lerp, rnd, cue, camera, synth, tools, title, sup, credit };
+  }
+
+  const cv = document.getElementById('film'), g = cv.getContext('2d'), app = document.getElementById('app');
+  let k = 1, T = 0, playing = false, started = false;
+  function fit() { const s = Math.min(innerWidth / W, innerHeight / H), dpr = Math.min(2, window.devicePixelRatio || 1); cv.style.width = (W * s) + 'px'; cv.style.height = (H * s) + 'px'; cv.width = Math.round(W * s * dpr); cv.height = Math.round(H * s * dpr); k = cv.width / W; if (!playing) frame(T); }
+  const grain = document.createElement('canvas'); grain.width = grain.height = 256; (function () { const c = grain.getContext('2d'), d = c.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = 110 + rnd(i, 5) * 145; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } c.putImageData(d, 0, 0); })();
+  function finish(t, dur) { // vignette, grain, fade in and out
+    const vg = g.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H * 0.95); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.62)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+    g.globalAlpha = 0.07; g.globalCompositeOperation = 'overlay'; const f = Math.floor(t * 24), ox = Math.floor(rnd(f, 1) * 256), oy = Math.floor(rnd(f, 2) * 256); for (let y = -oy; y < H; y += 256) for (let x = -ox; x < W; x += 256) g.drawImage(grain, x, y);
+    g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; const fade = Math.max(1 - seg(t, 0.15, 1.3), seg(t, dur - 1.4, 1.2)); if (fade > 0) { g.fillStyle = 'rgba(4,6,12,' + fade + ')'; g.fillRect(0, 0, W, H); }
+  }
+  function card(t, dur, draw) { g.fillStyle = C.bg; g.fillRect(0, 0, W, H); const sp = g.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, 1100); sp.addColorStop(0, 'rgba(58,74,150,0.34)'); sp.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = sp; g.fillRect(0, 0, W, H); draw(); finish(t, dur); }
+  function frame(Tg) {
+    if (!items.length) return; g.setTransform(k, 0, 0, k, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+    let it = items[0]; for (const x of items) if (x.start <= Tg) it = x; const t = Tg - it.start;
+    if (it.type === 'film') { it.scene.draw(g, t); finish(t, it.dur); if (it.scene.over) it.scene.over(g, t); }
+    else if (it.type === 'open') card(t, it.dur, () => { g.textAlign = 'center'; g.textBaseline = 'middle'; g.globalAlpha = eo(seg(t, 0.3, 0.8)); g.font = '800 190px ' + DISP; g.fillStyle = C.text; g.fillText(ED.title, W / 2, H / 2 - 70 - 14 * (1 - eo(seg(t, 0.3, 1.2)))); g.font = '600 30px ' + MONO; g.fillStyle = C.dim; g.globalAlpha = eo(seg(t, 1.0, 0.8)); g.fillText(ED.label.toUpperCase(), W / 2, H / 2 + 70); const fl = items.filter((x) => x.type === 'film'); g.font = '700 30px ' + DISP; fl.forEach((f, i) => { g.globalAlpha = eo(seg(t, 1.8 + i * 0.28, 0.5)); g.fillStyle = C.amber; g.fillText(f.title, W / 2 + (i - (fl.length - 1) / 2) * (1500 / fl.length), H / 2 + 190); }); g.globalAlpha = 1; })
+    else if (it.type === 'take') card(t, it.dur, () => { g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.globalAlpha = eo(seg(t, 0.3, 0.6)); g.fillStyle = C.amber; g.fillRect(160, 300, 8, 96); g.font = '600 28px ' + MONO; g.fillStyle = C.dim; g.fillText((it.who || 'The professor').toUpperCase(), 196, 336); g.font = '600 22px ' + MONO; g.fillText('ON “' + (it.about || '').toUpperCase() + '”', 196, 378); const ws = it.line.split(' '); g.font = '800 96px ' + DISP; let x = 160, y = 540; ws.forEach((w, i) => { const wd = g.measureText(w + ' ').width; if (x + wd > 1760) { x = 160; y += 112; } g.globalAlpha = eo(seg(t, 0.9 + i * 0.16, 0.5)); g.fillStyle = C.text; g.fillText(w, x, y); x += wd; }); const on = t > 0.6 && t < it.dur - 1.6 ? 1 : 0.12; for (let i = 0; i < 60; i++) { const a = 0.15 + 0.85 * Math.abs(Math.sin(t * (2.1 + rnd(i, 1) * 3.4) + rnd(i, 2) * 6.28) * Math.sin(t * 0.9 + i * 0.35)), hgt = (a * on + 0.05) * 90; g.globalAlpha = 0.35 + 0.6 * a * on; g.fillStyle = C.amber; g.fillRect(160 + i * 26, 860 - hgt / 2, 12, hgt); } g.globalAlpha = 1; })
+    else card(t, it.dur, () => { g.textAlign = 'center'; g.textBaseline = 'middle'; g.globalAlpha = eo(seg(t, 0.4, 0.8)); g.font = '800 170px ' + DISP; g.fillStyle = C.text; g.fillText(ED.title, W / 2, H / 2 - 40); g.font = '600 26px ' + MONO; g.fillStyle = C.dim; g.fillText((ED.label + ' · sources and links are on the weekly page').toUpperCase(), W / 2, H / 2 + 90); g.globalAlpha = 1; });
+    g.fillStyle = '#000'; g.fillRect(0, 0, W, BAR); g.fillRect(0, H - BAR, W, BAR);
+    if (!playing && started) { g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(0, H - 8, W, 8); g.fillStyle = C.amber; g.fillRect(0, H - 8, W * cl(Tg / total), 8); items.forEach((x) => { g.fillStyle = '#000'; g.fillRect(W * x.start / total - 1, H - 8, 2, 8); }); g.font = '600 20px ' + MONO; g.fillStyle = C.dim; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText((it.title || '').toUpperCase() + '  ·  PAUSED  ·  SPACE TO PLAY  ·  ↑ ↓ PREVIOUS / NEXT FILM', 40, H - 46); }
+  }
+
+  // ---------------- audio: every clip and every baked score on one AudioContext clock ----------------
+  let ac = null, t0 = 0, mute = false, sounds = [], live = [], perf0 = 0;
+  async function loadAudio() {
+    ac = new (window.AudioContext || window.webkitAudioContext)(); const dec = async (url) => ac.decodeAudioData(await (await fetch(url)).arrayBuffer()), jobs = [];
+    const add = (url, at, gain) => jobs.push(dec(url).then((buf) => sounds.push({ buf, at, gain })).catch((e) => console.warn('audio missing', url)));
+    items.forEach((it) => { if (it.type === 'film') { it.V.beats.forEach((b) => add(b.audio, it.start + b.start, 1.4)); if (it.V.bed) add(it.V.bed, it.start, 1.0); else if (it.scene.score && items.length < 3) jobs.push(renderBed(it).then((buf) => sounds.push({ buf, at: it.start, gain: 1.0 }))); } if (it.type === 'take') add(it.audio, it.start + 0.9, 1.0); if (it.type === 'open' && ED.sting_in) add(ED.sting_in, it.start + 0.2, 0.6); if (it.type === 'end' && ED.sting_out) add(ED.sting_out, it.start + 0.2, 0.7); });
+    await Promise.all(jobs);
+  }
+  async function renderBed(it) { const sr = 44100, oc = new OfflineAudioContext(2, Math.ceil(it.dur * sr), sr); it.scene.score(oc); return oc.startRendering(); }
+  function stopAll() { live.forEach((s) => { try { s.stop(); } catch (e) {} }); live = []; }
+  function schedule() { stopAll(); if (mute || !ac) return; const now = ac.currentTime + 0.06; t0 = now - T; sounds.forEach((s) => { if (s.at + s.buf.duration <= T) return; const src = ac.createBufferSource(), gn = ac.createGain(); src.buffer = s.buf; gn.gain.value = s.gain; src.connect(gn).connect(ac.destination); src.start(now + Math.max(0, s.at - T), Math.max(0, T - s.at)); live.push(src); }); }
+  const clock = () => mute || !ac ? (performance.now() - perf0) / 1000 : ac.currentTime - t0;
+  function play() { if (T >= total - 0.05) T = 0; playing = true; perf0 = performance.now() - T * 1000; if (ac && ac.state === 'suspended') ac.resume(); schedule(); app.classList.add('playing'); document.getElementById('again').hidden = true; }
+  function pause() { playing = false; stopAll(); app.classList.remove('playing'); frame(T); }
+  function seek(t) { T = cl(t, 0, total - 0.05); perf0 = performance.now() - T * 1000; if (playing) schedule(); else frame(T); }
+  function jump(d) { let i = 0; items.forEach((x, n) => { if (x.start <= T + 0.01) i = n; }); if (d < 0 && T - items[i].start > 3) d = 0; let j = cl(i + d, 0, items.length - 1); while (d && items[j].type === 'take' && j + d >= 0 && j + d < items.length) j += d; seek(items[j].start); }
+  function loop() { if (playing) { T = clock(); if (T >= total) { T = total; playing = false; stopAll(); app.classList.remove('playing'); document.getElementById('again').hidden = false; } frame(T); } requestAnimationFrame(loop); }
+  async function begin(opt) { opt = opt || {}; mute = !!opt.mute; document.querySelectorAll('#poster button').forEach((b) => { b.disabled = true; }); document.getElementById('play').textContent = 'Loading…'; try { if (!mute) await loadAudio(); } catch (e) { console.warn('audio failed, playing silent', e); mute = true; } document.getElementById('poster').hidden = true; started = true; T = opt.at || 0; play(); }
+  const wav = (b) => { const d = b.getChannelData(0), n = d.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf), W4 = (o, s) => { for (let i = 0; i < 4; i++) v.setUint8(o + i, s.charCodeAt(i)); }; W4(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); W4(8, 'WAVE'); W4(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, b.sampleRate, true); v.setUint32(28, b.sampleRate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); W4(36, 'data'); v.setUint32(40, n * 2, true); for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, d[i])) * 32767, true); return new Blob([buf]); };
+  const film = (id) => items.find((x) => x.type === 'film' && x.id === id);
+
+  window.Film = {
+    define(id, factory) { defs[id] = factory; },
+    boot() {
+      ED.items.forEach((it) => { const x = Object.assign({}, it); if (x.type === 'film') { x.V = ED.films[x.id]; x.title = x.V.title; x.dur = x.V.total; x.scene = defs[x.id](makeKit(x.V)); } else if (x.type === 'take') { x.dur = x.dur + 2.6; x.title = 'The professor'; } else { x.dur = x.type === 'open' ? 7.5 : 7; x.title = ED.title; } x.start = total; total += x.dur; items.push(x); });
+      addEventListener('resize', fit); fit(); const q = new URLSearchParams(location.search), fl = items.filter((x) => x.type === 'film'), list = document.getElementById('films');
+      fl.forEach((f, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chap'; b.innerHTML = '<i>' + (i + 1) + '</i><b></b><span></span>'; b.querySelector('b').textContent = f.title; b.querySelector('span').textContent = Math.floor(f.dur / 60) + ':' + ('0' + Math.round(f.dur % 60)).slice(-2); b.addEventListener('click', () => go(f.start)); list.append(b); });
+      document.getElementById('runtime').textContent = Math.floor(total / 60) + ':' + ('0' + Math.round(total % 60)).slice(-2);
+      const go = (at) => { try { const p = app.requestFullscreen && app.requestFullscreen(); if (p && p.catch) p.catch(() => {}); } catch (e) {} begin({ mute: q.has('mute'), at }); };
+      if (q.has('t')) { document.getElementById('poster').hidden = true; const f = q.get('film') && film(q.get('film')); T = (f ? f.start : 0) + parseFloat(q.get('t')); const again = () => frame(T); again(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(again); setTimeout(again, 600); return; }
+      document.getElementById('play').addEventListener('click', () => go(0)); document.getElementById('againbtn').addEventListener('click', () => { seek(0); play(); });
+      cv.addEventListener('click', () => { if (started) playing ? pause() : play(); });
+      addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'KeyK') { e.preventDefault(); if (!started) return document.getElementById('play').click(); playing ? pause() : play(); } else if (!started) return; else if (e.code === 'ArrowRight') seek(T + 5); else if (e.code === 'ArrowLeft') seek(T - 5); else if (e.code === 'ArrowDown' || e.code === 'KeyN') { e.preventDefault(); jump(1); } else if (e.code === 'ArrowUp' || e.code === 'KeyP') { e.preventDefault(); jump(-1); } else if (e.code === 'KeyF') { try { document.fullscreenElement ? document.exitFullscreen() : app.requestFullscreen(); } catch (err) {} } });
+      let idle; addEventListener('mousemove', () => { app.classList.remove('idle'); clearTimeout(idle); idle = setTimeout(() => { if (playing) app.classList.add('idle'); }, 1800); });
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => frame(0)); frame(0); requestAnimationFrame(loop);
+      if (q.has('selftest')) (async () => { // silent run through every item boundary; the result lands in <body data-selftest>
+        const wait = (ms) => new Promise((r) => setTimeout(r, ms)), out = []; await begin({ mute: true }); await wait(1500); out.push(['start', +T.toFixed(2)]);
+        for (const it of items) { seek(it.start + 0.5); await wait(1000); out.push([it.type + ':' + (it.id || ''), +(T - it.start).toFixed(2)]); }
+        seek(total - 2); await wait(3500); out.push(['end', +T.toFixed(2), playing, !document.getElementById('again').hidden]); document.body.setAttribute('data-selftest', JSON.stringify({ total: +total.toFixed(2), out }));
+      })();
+    },
+    begin, seek, state: () => ({ T: +T.toFixed(2), total: +total.toFixed(2), playing, started, mute, sounds: sounds.length }),
+    async bake(id, url) { const b = await renderBed(film(id)); await fetch(url, { method: 'POST', mode: 'no-cors', body: wav(b) }); return b.duration; },
+    async stats(id) { const it = film(id), oc = new OfflineAudioContext(1, 8, 44100), bedBuf = await renderBed(it), rms = (d, a, b) => { let s = 0; for (let i = a; i < b; i++) s += d[i] * d[i]; return Math.sqrt(s / Math.max(1, b - a)); }, db = (x) => +(20 * Math.log10(Math.max(x, 1e-6))).toFixed(1); const d = bedBuf.getChannelData(0), sr = bedBuf.sampleRate, out = { bed: [], peak: 0, voice: [] }; let pk = 0; for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); out.peak = db(pk); for (let s = 0; s < it.dur; s += 10) out.bed.push(db(rms(d, Math.floor(s * sr), Math.min(d.length, Math.floor((s + 10) * sr))))); for (const b of it.V.beats.slice(0, 2)) { const buf = await oc.decodeAudioData(await (await fetch(b.audio)).arrayBuffer()); const v = buf.getChannelData(0); out.voice.push(db(rms(v, 0, v.length))); } return out; }
+  };
+})();
+
+</script>
+<script>
+// JENSEN IS OUT — one continuous vertical shot. A tower, one floor per year since 1993. The camera starts at 2012,
+// climbs as the models plug in, reaches the top as the founder resigns, follows the falling market value, returns to
+// the new names on the door, and pulls back to all thirty-three years.
+Film.define('jensen', function (kit) {
+  const { V, B, W, H, BAR, C, MONO, DISP, cl, seg, eio, eo, lerp, rnd, cue, camera, synth, tools, title, credit } = kit;
+  const FH = 120, TW = 180, fy = (yr) => -((yr - 1993) + 0.5) * FH, TOP = -34 * FH;   // floor centre for a year; roof
+  const t = {
+    nn: cue('cards', 'the first great'), cardsAt: cue('cards', 'two graphics cards'), bet: cue('bet', 'and bet the company'), every: cue('bet', 'nearly every frontier'),
+    out: cue('out', 'he resigned'), noreason: cue('out', 'gave no reason'),
+    l1: cue('why', 'Days earlier'), l2: cue('why', 'The board had opened'), l3: cue('why', 'Beijing calls'), l4: cue('why', 'and the board says'),
+    lost: cue('drop', 'has lost'), big: cue('drop', 'One point seven'),
+    kress: cue('next', 'Colette Kress'), chair: cue('next', 'Nvidia has its first'), earn: cue('next', 'And it reports'),
+    one: cue('close', 'one man'), risk: cue('close', 'This is what')
+  };
+  const K = [
+    [0, 300, fy(2012) + 60, 1.4], [B.cards.end, 350, fy(2012) - 10, 1.6],
+    [B.bet.end - 0.4, 300, fy(2024), 1.0], [B.out.start + 1.9, 0, TOP - 60, 1.25], [B.out.end, 0, TOP - 70, 1.34],
+    [B.why.start + 2.2, 620, TOP - 80, 1.1], [B.why.end, 660, TOP - 80, 1.12],
+    [B.drop.start + 2.0, 1190, TOP + 130, 0.95], [B.drop.end, 1190, TOP + 470, 0.95],
+    [B.next.start + 2.5, 0, TOP - 130, 1.12], [B.next.end, 0, TOP - 140, 1.18],
+    [B.close.start + 4.6, 0, -2080, 0.235], [V.total, 0, -2040, 0.245]
+  ];
+  const LOG = [[t.l1, 'SUN NOV 8', 'Huang admits an affair and apologizes'], [t.l2, 'MON NOV 9', 'The board opens an independent review'], [t.l3, 'BEIJING', 'calls the spying claim “baseless”'], [t.l4, 'THE BOARD', '“no reason to believe national'], [t.l4 + 1.6, '', 'security was compromised”']];
+
+  function draw(g, T) {
+    const c = camera(K, T), d = tools(g, c), { X, Y, S } = d; d.room('rgba(58,74,150,0.30)');
+    const built = lerp(2012, 2026.9, eo(seg(T, t.bet - 0.5, B.out.start + 1.2 - t.bet))), dark = T >= t.out, wideA = eo(seg(T, B.close.start + 1.5, 2));
+    // ---- the tower, a floor a year
+    for (let yr = 1993; yr <= 2026; yr++) {
+      const y = fy(yr), lit = yr <= built, top = yr === 2026; if (Math.abs(y - c.y) * c.z > H) continue;
+      d.rr(-TW, y - FH / 2 + 5, TW * 2, FH - 10, 6, lit ? '#13203F' : null, lit ? C.blue : C.line, lit ? 2.5 : 1.5, lit ? 1 : 0.5);
+      for (let w = 0; w < 6; w++) { const on = lit && !(top && dark), fl = 0.55 + 0.4 * rnd(yr * 7 + w, Math.floor(T * 2 + rnd(yr, w) * 9)); d.rr(-TW + 30 + w * 55, y - 22, 34, 44, 3, on ? C.amber : '#1D2946', null, 0, on ? fl : 0.5); }
+      d.mono(String(yr), -TW - 34, y, yr === 2012 || yr === 1993 || yr === 2026 ? 40 : 30, yr === 2012 || yr === 1993 || yr === 2026 ? C.text : C.dim, 'right', lit ? 1 : 0.4);
+      // the models that plug in
+      if (yr >= 2015) { const n = yr >= 2021 ? 2 : 1; for (let j = 0; j < n; j++) { const side = (yr + j) % 2 ? 1 : -1, len = 150 + rnd(yr, j + 3) * 170, a = eo(seg(built, yr - 0.2 + j * 0.3, 0.6)), yy = y + (j ? 26 : -22), x1 = side * TW, x2 = side * (TW + len * a), pulse = 0.75 + 0.25 * Math.sin(T * 4 + yr); if (side < 0 && wideA < 0.5 && c.z > 0.6) continue; d.line(x1, yy, x2, yy, C.blue, 2.5, a * 0.9); d.rr(x2 - (side < 0 ? 64 : 0), yy - 15, 64, 30, 6, '#121C36', T >= t.every ? C.amber : C.blue, 2, a * pulse); } }
+    }
+    d.rr(-TW - 14, TOP - 14, TW * 2 + 28, 14, 3, C.blue, null, 0, built >= 2026 ? 1 : 0.3);
+    // ---- 2012: two gaming cards
+    const ca = eo(seg(T, t.cardsAt - 0.6, 0.7)) * seg(c.z, 0.35, 0.3); for (let i = 0; i < 2; i++) { const cx = 300 + i * 190, cy = fy(2012); d.rr(cx, cy - 46, 160, 92, 8, '#121C36', C.green, 2.5, ca); g.globalAlpha = ca * 0.9; g.strokeStyle = C.green; g.lineWidth = 2.5; for (let f = 0; f < 2; f++) { const fx = X(cx + 44 + f * 72), fyy = Y(cy), r = S(26); g.beginPath(); g.arc(fx, fyy, r, 0, 6.2832); g.stroke(); for (let b = 0; b < 5; b++) { const an = T * 6 + b * 1.2566; g.beginPath(); g.moveTo(fx, fyy); g.lineTo(fx + Math.cos(an) * r * 0.85, fyy + Math.sin(an) * r * 0.85); g.stroke(); } } g.globalAlpha = 1; }
+    d.line(TW, fy(2012), 300, fy(2012), C.green, 2.5, ca * 0.8, [6, 6]);
+    d.mono('TWO GAMING CARDS', 300, fy(2012) + 84, 30, C.green, 'left', ca); d.mono('THE FIRST GREAT NEURAL NETWORK', 300, fy(2012) - 86, 26, C.dim, 'left', eo(seg(T, t.nn, 0.6)) * (1 - seg(T, B.bet.start + 3, 1.5)));
+    d.mono('NEARLY EVERY FRONTIER MODEL', 440, fy(2025) + 10, 34, C.amber, 'left', eo(seg(T, t.every, 0.5)) * (1 - seg(T, B.out.start + 0.8, 1)));
+    // ---- the name on the door
+    const pa = 1 - seg(T, B.why.start + 1.2, 1.5), fall = eo(seg(T, t.out, 0.7)); if (pa > 0.01 && built > 2025.5) { g.save(); g.translate(X(0), Y(TOP - 110 + fall * 26)); g.rotate(fall * 0.07); g.globalAlpha = pa * (1 - 0.45 * fall) * eo(seg(built, 2025.6, 1)); g.beginPath(); g.roundRect(-S(280), -S(58), S(560), S(116), 10); g.fillStyle = '#121C36'; g.fill(); g.strokeStyle = dark ? C.dim : C.amber; g.lineWidth = 3; g.stroke(); g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '800 ' + S(54) + 'px ' + DISP; g.fillStyle = dark ? C.dim : C.text; g.fillText('JENSEN HUANG', 0, -S(14)); g.font = '600 ' + S(22) + 'px ' + MONO; g.fillStyle = C.dim; g.fillText('FOUNDER · CHIEF EXECUTIVE SINCE 1993', 0, S(30)); g.restore(); g.globalAlpha = 1; }
+    d.stamp('RESIGNED', 0, TOP - 118, 72, C.red, eo(seg(T, t.out + 0.25, 0.3)) * pa, -0.1); d.mono('EFFECTIVE IMMEDIATELY · NO REASON GIVEN', 0, TOP - 226, 28, C.text, 'center', eo(seg(T, t.noreason, 0.5)) * pa);
+    // ---- what the reporting said
+    const la = 1 - seg(T, B.drop.start + 0.6, 1.2); LOG.forEach((L, i) => { const n = Math.floor(seg(T, L[0], 1.5) * L[2].length), yy = TOP - 230 + i * 62; d.mono(L[1], 410, yy, 28, C.amber, 'left', la * seg(T, L[0], 0.2)); d.mono(L[2].slice(0, n) + (n < L[2].length && T >= L[0] ? '▌' : ''), 640, yy, 28, C.text, 'left', la * seg(T, L[0], 0.2)); });
+    // ---- the market value
+    const ga = eo(seg(T, B.drop.start + 0.8, 0.8)) * (1 - 0.3 * wideA), GX = 1040, GT = TOP - 310, GH = 900, f = Math.max(0, T - t.lost - 0.3); if (ga > 0.01) {
+      d.rr(GX, GT + GH * 0.3, 150, GH * 0.7, 6, C.blue, null, 0, ga); const dy = Math.min(1500, 0.5 * 950 * f * f); g.save(); g.translate(X(GX + 75), Y(GT + GH * 0.15 + dy)); g.rotate(Math.min(0.5, f * 0.22)); g.globalAlpha = ga * (1 - seg(f, 1.6, 0.9)); g.fillStyle = T >= t.lost ? C.red : C.blue; g.beginPath(); g.roundRect(-S(75), -S(GH * 0.15), S(150), S(GH * 0.3), 6); g.fill(); g.restore(); g.globalAlpha = 1;
+      d.mono('NVIDIA MARKET VALUE', GX + 180, GT + 26, 26, C.dim, 'left', ga); d.mono('RECORD · OCTOBER 6', GX + 180, GT + 66, 22, C.dim, 'left', ga); d.line(GX - 20, GT, GX + 170, GT, C.dim, 2, ga * 0.8, [4, 6]);
+      d.disp('−30%', GX + 180, GT + GH * 0.2, 110, C.red, 'left', ga * eo(seg(T, t.lost + 0.2, 0.4))); const bp = eo(seg(T, t.big, 0.5)); d.disp('$1.7T', GX + 180, GT + GH * 0.62, 250 * (1.25 - 0.25 * bp), C.red, 'left', ga * bp); d.mono('GONE IN FIVE WEEKS', GX + 186, GT + GH * 0.62 + 160, 28, C.dim, 'left', ga * eo(seg(T, t.big + 0.7, 0.5)));
+    }
+    // ---- the new names
+    const plate = (x, at, a1, a2) => { const p = eo(seg(T, at, 0.6)); if (p <= 0.01) return; d.rr(x - 270, TOP - 268 + (1 - p) * 30, 540, 112, 10, '#121C36', C.amber, 3, p); d.disp(a1, x, TOP - 226 + (1 - p) * 30, 46, C.text, 'center', p); d.mono(a2, x, TOP - 184 + (1 - p) * 30, 21, C.dim, 'center', p); };
+    plate(-300, t.kress, 'COLETTE KRESS', 'INTERIM CHIEF EXECUTIVE · STILL CFO'); plate(300, t.chair, 'HARVEY JONES', 'FIRST-EVER BOARD CHAIR'); d.mono('EARNINGS REPORT: TODAY', 0, TOP - 330, 30, C.amber, 'center', eo(seg(T, t.earn, 0.5)) * (1 - wideA));
+    // ---- thirty-three years, one founder
+    d.disp('33 YEARS', -520, -2500, 520, C.text, 'right', wideA * eo(seg(T, t.one - 0.4, 0.8))); d.disp('ONE FOUNDER', -520, -1980, 300, C.dim, 'right', wideA * eo(seg(T, t.one + 0.5, 0.8)));
+    d.stamp('KEY-PERSON RISK', 1900, -1500, 300, C.amber, eo(seg(T, t.risk + 0.4, 0.35)), -0.06);
+  }
+  function over(g, T) { title(g, T, 'Jensen Is Out'); credit(g, T, t.risk + 3.0, 'SOURCES: NVIDIA 8-K, NOVEMBER 12, 2026 · REPORTING BY REUTERS, CNBC, AL JAZEERA'); }
+  function score(ac) {
+    const s = synth(ac, 0.34), N = { E2: 82.41, B2: 123.47, G3: 196, C2: 65.41, G2: 98, E3: 164.81, A2: 110, C3: 130.81, D2: 73.42, Fs3: 185, B1: 61.74, D3: 146.83 };
+    [['cards', ['E2', 'B2', 'G3']], ['bet', ['C2', 'G2', 'E3']], ['out', ['B1']], ['why', ['A2', 'C3', 'E3']], ['drop', ['D2', 'A2', 'Fs3']], ['next', ['C2', 'G2', 'E3']], ['close', ['E2', 'B2', 'G3']]].forEach((c, i, all) => s.pad(c[1].map((n) => N[n]), i === 0 ? 0.2 : B[c[0]].start - 0.6, i < all.length - 1 ? B[all[i + 1][0]].start + 1.6 : V.total - 0.2, c[0] === 'out' ? 0.02 : 0.03));
+    s.tone(0.3, 41.2, V.total - 0.6, { g: 0.045, a: 4, r: 4 });
+    // the climb: a rising pattern, a floor at a time, then silence at the top
+    const scale = [164.81, 196, 246.94, 293.66, 329.63, 392, 493.88, 587.33, 659.25, 783.99]; let n = 0;
+    for (let at = B.cards.start; at < t.out; at += 0.3125, n++) { const up = seg(at, t.bet, t.out - t.bet); s.tone(at, scale[Math.min(9, Math.floor(up * 7) + (n % 3))], 0.16, { g: 0.03 * (0.4 + 0.6 * up), a: 0.005, r: 0.12, lp: 1800 }); if (n % 2 === 0) s.noise(at, 0.03, { type: 'highpass', f0: 5000, g: 0.01, pk: 0.1 }); }
+    s.whoosh(t.bet, 3.2, true, 0.06); s.bell(t.every, 659.25, 0.05);
+    s.thunk(t.out + 0.25); s.tone(t.out, 62, 3.0, { f1: 40, g: 0.18, a: 0.01, r: 2.6 });
+    LOG.forEach((L) => { for (let i = 0; i < L[2].length; i += 2) s.noise(L[0] + i * 1.5 / L[2].length, 0.016, { type: 'highpass', f0: 3600, g: 0.02, pk: 0.1 }); });
+    s.whoosh(B.drop.start + 0.2, 1.9, true, 0.05); s.tone(t.lost + 0.3, 520, 1.5, { f1: 70, g: 0.07, a: 0.02, r: 0.3 }); s.thunk(t.lost + 1.75); s.bell(t.big, 220, 0.07);
+    s.whoosh(B.next.start + 0.2, 2.2, true, 0.05); s.bell(t.kress, 523.25, 0.05); s.bell(t.chair, 659.25, 0.05); s.tone(t.earn, 880, 0.5, { g: 0.04, r: 0.4 });
+    s.whoosh(B.close.start + 0.3, 4.4, false, 0.1); s.tone(B.close.start + 1.2, 58, 3.4, { f1: 40, g: 0.15, a: 0.05, r: 2.8 }); s.thunk(t.risk + 0.4);
+    for (let at = B.close.start + 1; at < V.total - 3; at += 0.625, n++) s.tone(at, scale[n % 4], 0.2, { g: 0.02, a: 0.005, r: 0.15, lp: 1400 });
+    [82.41, 123.47, 196, 329.63].forEach((f) => s.tone(t.risk + 1.2, f, V.total - t.risk - 1.5, { g: 0.03, a: 1.2, r: 3.0 }));
+  }
+  return { draw, over, score };
+});
+
+</script>
+<script>
+// FINGERPRINTS — one continuous shot. File on a desk -> into its numbers -> down to the chip -> back out as the print
+// appears -> the search -> six matches -> the bench test -> far out to the map question -> back to the file.
+Film.define('fingerprints', function (kit) {
+  const { V, B, W, H, BAR, cl, seg, eio, eo, lerp, rnd, cue, camera } = kit;
+  const C = { bg: '#070B16', card: '#0F172B', line: '#2B3A66', text: '#E9EEF8', dim: '#8492B0', blue: '#6D8BFF', amber: '#FFB547', green: '#51D6A0', red: '#FF6B6B' };
+  const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace', DISP = '"Bricolage Grotesque", "Arial Narrow", Arial, sans-serif';
+  // grid inside the file
+  const GX0 = -170, GY0 = -190, CS = 5, COLS = 68, ROWS = 80, TC = 34, TR = 40, TX = GX0 + TC * CS + CS / 2, TY = GY0 + TR * CS + CS / 2;
+  const t = {
+    down: cue('file', 'Anyone can download'), enormous: cue('file', 'It is a single'),
+    dice: B.dice.start, settle: cue('dice', 'every one of those'),
+    pattern: cue('chip', 'leaves a pattern'), diff: cue('chip', 'A different chip'),
+    print: B.print.start,
+    search: B.search.start, depue: cue('search', 'Will Depue'), tried: cue('search', 'He tried'), six: cue('search', 'six trillion'), lock: B.search.end - 0.35,
+    match: B.match.start, allSix: cue('match', 'All six pointed'), black: cue('match', 'Blackwell'), newest: cue('match', "Nvidia's newest"), ban: cue('match', 'The one that cannot'),
+    bench: B.bench.start, rebuilt: cue('bench', 'It rebuilt'), older: cue('bench', 'An older chip'), wherever: cue('bench', 'And wherever'), t24: cue('bench', 'Twenty-four out'),
+    where: B.where.start, sitting: cue('where', 'where that chip'), inside: cue('where', 'Inside China'), rented: cue('where', 'Rented in another'),
+    close: B.close.start, evidence: cue('close', 'The evidence')
+  };
+  const K = [
+    [0, 0, 30, 1.05], [B.file.start, 0, 20, 1.15], [B.file.end, 0, 6, 1.75],
+    [t.dice + 3.2, 14, 4, 8.5], [B.dice.end, TX + 6, TY + 3, 15],
+    [B.chip.start + 2.6, TX, TY, 150], [B.chip.end, TX, TY, 172],
+    [t.print + 2.7, TX, TY, 8.2], [B.print.end, 0, 4, 2.3],
+    [t.search + 2.6, 430, 0, 1.3], [B.search.end, 470, 0, 1.36],
+    [t.match + 2.6, 1500, 70, 1.12], [B.match.end, 1500, 96, 1.18],
+    [t.bench + 2.4, 1500, 930, 1.06], [t.wherever + 1.5, 1500, 1085, 1.0], [B.bench.end, 1500, 1100, 1.02],
+    [t.where + 4.2, 700, 420, 0.085], [B.where.end, 700, 420, 0.078],
+    [t.close + 3.1, 0, 4, 1.9], [V.total, 0, 0, 2.15]
+  ];
+  const isRidge = (col, row) => { const dx = (col - TC) / 1.3, dy = row - TR, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx); return r < 33 && ((r * 0.5 + 0.35 * Math.sin(a * 2 + r * 0.15) + 1) % 1) < 0.5; };
+  const hex = (v) => ('0' + Math.floor(v * 256).toString(16)).slice(-2).toUpperCase();
+  const CHIPS = ['H100', 'H800', 'A100', 'B200', 'B300', 'GB200', 'GB300', 'L40S', 'H200'];
+
+  function draw(g, T) {
+    const c = camera(K, T), X = (x) => W / 2 + (x - c.x) * c.z, Y = (y) => H / 2 + (y - c.y) * c.z, S = (l) => l * c.z;
+    const txt = (s, x, y, size, color, al, font, alpha) => { const px = S(size); if (px < 5 || alpha <= 0.01) return; g.globalAlpha = alpha == null ? 1 : alpha; g.font = (font || '600 ') + px + 'px ' + (font && font.indexOf('px') < 0 ? '' : '') + MONO; g.fillStyle = color; g.textAlign = al || 'center'; g.textBaseline = 'middle'; g.fillText(s, X(x), Y(y)); g.globalAlpha = 1; };
+    const dtxt = (s, x, y, size, color, al, alpha, weight) => { const px = S(size); if (px < 5 || alpha <= 0.01) return; g.globalAlpha = alpha == null ? 1 : alpha; g.font = (weight || 800) + ' ' + px + 'px ' + DISP; g.fillStyle = color; g.textAlign = al || 'center'; g.textBaseline = 'middle'; g.fillText(s, X(x), Y(y)); g.globalAlpha = 1; };
+    const rr = (x, y, w, h, r, fill, stroke, lw, alpha) => { g.globalAlpha = alpha == null ? 1 : alpha; g.beginPath(); g.roundRect(X(x), Y(y), S(w), S(h), Math.min(S(r), S(Math.min(w, h)) / 2)); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw || 2; g.stroke(); } g.globalAlpha = 1; };
+    const chip = (x, y, size, alpha, label, kind, glow) => { // a chip: body, pins, die
+      if (alpha <= 0.01) return; const s = S(size), px = X(x), py = Y(y), n = kind === 'b' ? 9 : 7; g.globalAlpha = alpha;
+      g.strokeStyle = kind === 'old' ? '#5B6884' : C.blue; g.lineWidth = Math.max(1.5, s * 0.022);
+      for (let i = 0; i < n; i++) { const o = -s / 2 + s * (i + 0.5) / n; g.beginPath(); g.moveTo(px + o, py - s / 2); g.lineTo(px + o, py - s * 0.62); g.moveTo(px + o, py + s / 2); g.lineTo(px + o, py + s * 0.62); g.moveTo(px - s / 2, py + o); g.lineTo(px - s * 0.62, py + o); g.moveTo(px + s / 2, py + o); g.lineTo(px + s * 0.62, py + o); g.stroke(); }
+      g.beginPath(); g.roundRect(px - s / 2, py - s / 2, s, s, s * 0.09); g.fillStyle = '#121C36'; g.fill(); g.stroke();
+      const core = glow ? C.amber : (kind === 'old' ? '#3A4560' : C.blue); g.beginPath(); g.roundRect(px - s * 0.24, py - s * 0.24, s * 0.48, s * 0.48, s * 0.05); g.fillStyle = core; g.globalAlpha = alpha * (0.55 + 0.25 * Math.sin(T * 3.1)); g.fill();
+      g.globalAlpha = alpha; if (label) { g.font = '700 ' + Math.max(11, s * 0.13) + 'px ' + MONO; g.fillStyle = C.text; g.textAlign = 'center'; g.textBaseline = 'top'; g.fillText(label, px, py + s * 0.72); } g.globalAlpha = 1;
+    };
+
+    // ---- backdrop: dark room, one pool of light that follows the subject
+    g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
+    const lx = X(c.z < 0.4 ? 700 : c.x), ly = Y(c.z < 0.4 ? 420 : c.y), lr = cl(760 * Math.sqrt(c.z), 420, 1500), sp = g.createRadialGradient(lx, ly, 0, lx, ly, lr); sp.addColorStop(0, 'rgba(60,84,160,0.34)'); sp.addColorStop(1, 'rgba(60,84,160,0)'); g.fillStyle = sp; g.fillRect(0, 0, W, H);
+    const objA = seg(c.z, 0.1, 0.3), mapA = 1 - seg(c.z, 0.12, 0.4);
+
+    // ---- the map question (only when far out)
+    if (mapA > 0.01) {
+      g.globalAlpha = 0.09 * mapA; g.strokeStyle = C.blue; g.lineWidth = 1.5; for (let gx = -15000; gx <= 17000; gx += 2500) { g.beginPath(); g.moveTo(X(gx), 0); g.lineTo(X(gx), H); g.stroke(); } for (let gy = -10000; gy <= 10000; gy += 2500) { g.beginPath(); g.moveTo(0, Y(gy)); g.lineTo(W, Y(gy)); g.stroke(); }
+      g.globalAlpha = 0.8 * mapA; g.strokeStyle = C.text; g.lineWidth = 4; g.setLineDash([18, 16]); g.lineDashOffset = -T * 14; g.beginPath(); for (let wy = -9000; wy <= 9000; wy += 300) { const wx = 700 + 520 * Math.sin(wy / 2300); wy === -9000 ? g.moveTo(X(wx), Y(wy)) : g.lineTo(X(wx), Y(wy)); } g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+      const aIn = mapA * eo(seg(T, t.inside, 0.6)), aOut = mapA * eo(seg(T, t.rented, 0.6));
+      dtxt('INSIDE CHINA', -4700, -2100, 980, C.text, 'center', aIn); dtxt('the export ban was broken', -4700, -1000, 560, C.red, 'center', aIn, 700);
+      dtxt('ANOTHER COUNTRY', 6100, -2100, 980, C.text, 'center', aOut); dtxt('it may be legal', 6100, -1000, 560, C.green, 'center', aOut, 700);
+      // the chip, and where it might have been
+      const sway = 700 + Math.sin((T - t.sitting) * 1.3) * 1700, toIn = eio(seg(T, t.inside - 0.2, 1.2)), toOut = eio(seg(T, t.rented - 0.2, 1.4)), back = eio(seg(T, t.rented + 3.2, 1.6));
+      let mx = lerp(sway, -4700, toIn); mx = lerp(mx, 6100, toOut); mx = lerp(mx, 700 + Math.sin(T * 1.3) * 1500, back); const my = 1900, ma = mapA * eo(seg(T, t.sitting - 0.3, 0.6));
+      g.globalAlpha = 0.35 * ma; g.strokeStyle = C.amber; g.lineWidth = 3; g.setLineDash([6, 12]); g.beginPath(); g.moveTo(X(-4700), Y(my)); g.lineTo(X(6100), Y(my)); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+      const save = c.z; c.z = 1; const px = W / 2 + (mx - c.x) * save, py = H / 2 + (my - c.y) * save; c.z = save;
+      if (ma > 0.01) { g.globalAlpha = ma; g.beginPath(); g.arc(px, py, 74 + 8 * Math.sin(T * 4), 0, 6.2832); g.strokeStyle = C.amber; g.lineWidth = 3; g.stroke(); g.beginPath(); g.roundRect(px - 40, py - 40, 80, 80, 8); g.fillStyle = '#121C36'; g.fill(); g.strokeStyle = C.blue; g.lineWidth = 3; g.stroke(); g.beginPath(); g.roundRect(px - 18, py - 18, 36, 36, 4); g.fillStyle = C.amber; g.fill(); g.font = '800 96px ' + DISP; g.fillStyle = C.amber; g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.fillText('?', px, py - 98); g.globalAlpha = 1; }
+    }
+
+    // ---- the file
+    if (objA > 0.01) {
+      const fa = objA; rr(-210, -270, 420, 540, 14, C.card, C.line, 2, fa);
+      txt('MODEL WEIGHTS', -170, -232, 15, C.dim, 'left', null, fa); txt('1 FILE', 170, -232, 15, C.dim, 'right', null, fa);
+      const dp = seg(T, t.down, 2.4); rr(-210, 292, 420, 10, 5, '#18223F', null, 0, fa * seg(T, t.down - 0.5, 0.5)); if (dp > 0) rr(-210, 292, 420 * eo(dp), 10, 5, C.blue, null, 0, fa);
+      txt(dp >= 1 ? 'DOWNLOADED · OPEN TO ANYONE' : 'DOWNLOADING…', 0, 326, 14, C.dim, 'center', null, fa * seg(T, t.down - 0.3, 0.5) * (1 - seg(T, B.dice.end, 2)));
+      // the numbers
+      const cpx = S(CS), halfW = W / 2 / c.z, halfH = H / 2 / c.z, c0 = Math.max(0, Math.floor((c.x - halfW - GX0) / CS)), c1 = Math.min(COLS - 1, Math.ceil((c.x + halfW - GX0) / CS)), r0 = Math.max(0, Math.floor((c.y - halfH - GY0) / CS)), r1 = Math.min(ROWS - 1, Math.ceil((c.y + halfH - GY0) / CS));
+      const kf = Math.floor(T * 12), wake = 0.62 + 0.38 * seg(T, t.enormous, 2.5), dive = 1 - seg(c.z, 40, 110), glow = 0.75 + 0.25 * Math.sin((T - t.evidence) * 3) * seg(T, t.evidence, 0.5), settleSpan = B.dice.end + 0.3 - t.settle;
+      if (cpx >= 22) { g.font = '600 ' + (cpx * 0.4) + 'px ' + MONO; g.textAlign = 'center'; g.textBaseline = 'middle'; }
+      for (let r = r0; r <= r1; r++) for (let q = c0; q <= c1; q++) {
+        const i = r * COLS + q, isT = q === TC && r === TR, flick = T >= t.dice + 0.5 && T < t.settle + rnd(i, 7) * settleSpan, v = flick ? rnd(i, kf) : rnd(i, 999), d = Math.hypot(q - TC, r - TR), ridge = isRidge(q, r) && T >= t.print + 0.45 + d * 0.052;
+        const x = X(GX0 + q * CS), y = Y(GY0 + r * CS); let a = fa * (isT ? 1 : dive) * wake; if (a <= 0.01) continue;
+        if (cpx < 4.2) { g.globalAlpha = a * (ridge ? glow : 0.3 + 0.6 * v); g.fillStyle = ridge ? C.amber : (flick ? '#B9C7FF' : '#9FB0D8'); g.fillRect(x, y, cpx * 0.82, cpx * 0.82); }
+        else { g.globalAlpha = a * (ridge ? 1 : 0.5 + 0.5 * v); g.fillStyle = ridge ? C.amber : (cpx < 22 ? (flick ? '#5A70C8' : '#3A4C8C') : (flick ? '#22305C' : '#172244')); g.beginPath(); g.roundRect(x + cpx * 0.06, y + cpx * 0.06, cpx * 0.88, cpx * 0.88, cpx * 0.12); g.fill();
+          if (cpx >= 22 && !(isT && c.z > 30)) { g.globalAlpha = a * (cpx > 300 ? 1 - seg(cpx, 300, 500) : 1); g.fillStyle = ridge ? '#1A1206' : (flick ? '#DCE5FF' : '#B4C1E6'); g.fillText(hex(v), x + cpx / 2, y + cpx / 2 + cpx * 0.02); } }
+      }
+      g.globalAlpha = 1;
+      // the chip under one number
+      const ca = seg(c.z, 30, 95) * fa; if (ca > 0.01) {
+        const kind = T >= t.diff ? 'b' : 'a', px = X(TX), py = Y(TY), s = S(3.1);
+        if (T >= t.pattern - 0.2) { g.lineWidth = Math.max(2, s * 0.012); for (let n = 0; n < 9; n++) { const ph = ((T - t.pattern) * 0.3 + n / 9) % 1, rad = s * (0.7 + ph * 1.9), al = ca * (1 - ph) * 0.9 * seg(T, t.pattern - 0.2, 0.5); g.globalAlpha = al; g.strokeStyle = kind === 'b' ? C.amber : '#9FB4FF'; g.setLineDash(kind === 'b' ? [s * 0.3, s * 0.08] : [s * 0.11, s * 0.09]); g.lineDashOffset = n * 40 + T * (kind === 'b' ? 60 : -40); g.beginPath(); g.ellipse(px, py, rad * (kind === 'b' ? 1.25 : 1), rad * (kind === 'b' ? 0.8 : 1), kind === 'b' ? 0.5 : 0, 0, 6.2832); g.stroke(); } g.setLineDash([]); g.globalAlpha = 1; }
+        chip(TX, TY, 3.1, ca, null, kind, T >= t.pattern);
+        const la = ca * seg(c.z, 120, 60); g.globalAlpha = la; g.font = '700 30px ' + MONO; g.textAlign = 'center'; g.textBaseline = 'top'; g.fillStyle = C.dim; g.fillText(kind === 'b' ? 'A DIFFERENT CHIP · A DIFFERENT PATTERN' : 'THE CHIP THAT FILLS IN THE NUMBERS', px, py + s * 0.72); g.globalAlpha = 1;
+      }
+    }
+
+    // ---- the search
+    const sa = objA * eo(seg(T, t.search + 0.9, 0.9)); if (sa > 0.01) {
+      g.globalAlpha = sa * 0.8; g.strokeStyle = C.blue; g.lineWidth = 2.5; g.setLineDash([10, 10]); g.lineDashOffset = -T * 60; g.beginPath(); g.moveTo(X(214), Y(0)); g.lineTo(X(506), Y(0)); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+      rr(510, -215, 560, 430, 14, C.card, C.line, 2, sa); const locked = T >= t.lock;
+      txt(locked ? 'MATCH' : 'SEARCHING', 546, -168, 24, locked ? C.amber : C.dim, 'left', null, sa);
+      txt('chip layout', 546, -96, 21, C.dim, 'left', null, sa); txt(locked ? 'B300' : CHIPS[Math.floor(T * 9) % CHIPS.length], 1034, -96, 36, locked ? C.amber : C.text, 'right', null, sa);
+      txt('seed', 546, -24, 21, C.dim, 'left', null, sa); txt(locked ? '953049583' : String(Math.floor(rnd(Math.floor(T * 30), 3) * 9e8 + 1e8)), 1034, -24, 36, locked ? C.amber : C.text, 'right', null, sa);
+      g.globalAlpha = sa * 0.5; g.fillStyle = C.line; g.fillRect(X(546), Y(30), S(488), 1.5); g.globalAlpha = 1;
+      txt('combinations tried', 546, 78, 21, C.dim, 'left', null, sa); const n = Math.round(6e12 * eo(seg(T, t.tried, Math.max(1.5, t.six + 1.1 - t.tried))));
+      txt(n.toLocaleString('en-US'), 1034, 146, 44, C.text, 'right', null, sa);
+    }
+
+    // ---- six matches, one chip
+    const ma = objA * seg(T, t.match + 0.1, 0.4); if (ma > 0.01) {
+      for (let i = 0; i < 6; i++) {
+        const x = 1125 + i * 150, lit = eo(seg(T, t.match + 0.3 + i * 0.33, 0.35)), a = ma * (0.25 + 0.75 * lit);
+        rr(x - 50, -215, 100, 130, 8, C.card, lit > 0.5 ? C.amber : C.line, lit > 0.5 ? 3 : 2, a);
+        if (lit > 0.05) { g.globalAlpha = ma * lit; g.strokeStyle = C.amber; g.lineWidth = Math.max(1.5, S(1.6)); for (let n = 1; n <= 4; n++) { g.beginPath(); g.ellipse(X(x), Y(-145), S(8 * n * 0.95), S(9 * n), 0, 3.4 + n * 0.1, 6.0 + n * 0.1); g.stroke(); } g.globalAlpha = 1; }
+        const lp = eo(seg(T, t.allSix + i * 0.07, 0.8)); if (lp > 0) { g.globalAlpha = ma * 0.8; g.strokeStyle = C.amber; g.lineWidth = 2.5; g.beginPath(); g.moveTo(X(x), Y(-82)); g.lineTo(X(lerp(x, 1500, lp)), Y(lerp(-82, 118, lp))); g.stroke(); g.globalAlpha = 1; }
+      }
+      txt('DEEPSEEK · MOONSHOT · MINIMAX · ANT GROUP', 1500, -252, 22, C.dim, 'center', null, ma * seg(T, t.match + 1.4, 0.6));
+      const ba = ma * eo(seg(T, t.allSix + 0.5, 0.6)); chip(1500, 215, 170, ba, null, 'b', T >= t.black);
+      dtxt('BLACKWELL', 1500, 362, 60, C.text, 'center', ma * eo(seg(T, t.black, 0.4))); txt("NVIDIA'S NEWEST CHIP", 1500, 412, 22, C.dim, 'center', null, ma * eo(seg(T, t.newest, 0.4)));
+      const bp = eo(seg(T, t.ban + 0.1, 0.3)); if (bp > 0) { const px = X(1800), py = Y(215), sc = (2.2 - 1.2 * bp); g.save(); g.translate(px, py); g.rotate(-0.1); g.scale(sc, sc); g.globalAlpha = ma * bp; g.strokeStyle = C.red; g.lineWidth = 5; g.beginPath(); g.roundRect(-S(150), -S(46), S(300), S(92), 10); g.stroke(); g.font = '800 ' + S(30) + 'px ' + DISP; g.fillStyle = C.red; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('EXPORT TO CHINA', 0, -S(16)); g.fillText('BANNED', 0, S(18)); g.restore(); g.globalAlpha = 1; }
+    }
+
+    // ---- the bench test
+    const na = objA * eo(seg(T, t.bench + 0.9, 0.7)); if (na > 0.01) {
+      chip(1230, 870, 190, na, null, 'b', T >= t.rebuilt + 1.4); chip(1770, 870, 190, na, null, 'old', false);
+      dtxt('BLACKWELL', 1230, 706, 40, C.text, 'center', na); dtxt('AN OLDER CHIP', 1770, 706, 40, C.dim, 'center', na);
+      for (let side = 0; side < 2; side++) for (let i = 0; i < 30; i++) {
+        const bx = (side ? 1770 : 1230) - 5 * 27 + (i % 10) * 27, by = 1028 + Math.floor(i / 10) * 27; let fill = '#172244', a = na * 0.8;
+        if (!side && T >= t.rebuilt + i * 0.05) { fill = C.amber; a = na; } if (side && T >= t.older) { const fl = T < t.older + 1.3; fill = fl && rnd(i, Math.floor(T * 14)) > 0.55 ? C.red : '#1B2238'; a = na * (fl ? 0.9 : 0.6); }
+        rr(bx + 1.5, by + 1.5, 24, 24, 3, fill, null, 0, a);
+      }
+      txt('REBUILT EXACTLY', 1230, 1140, 22, C.amber, 'center', null, na * eo(seg(T, t.rebuilt + 1.5, 0.4))); txt('REBUILT NONE', 1770, 1140, 22, C.red, 'center', null, na * eo(seg(T, t.older + 1.2, 0.4)));
+      const wa = na * seg(T, t.wherever, 0.4); for (let i = 0; i < 24; i++) { const on = T >= t.wherever + 0.4 + i * 0.085; g.globalAlpha = wa * (on ? 1 : 0.35); g.beginPath(); g.arc(X(1500 - 11.5 * 42 + i * 42), Y(1262), S(on ? 14 : 10), 0, 6.2832); g.fillStyle = on ? C.amber : '#2A3555'; g.fill(); } g.globalAlpha = 1;
+      txt('MODELS WHOSE MAKERS NAMED THEIR HARDWARE', 1500, 1212, 21, C.dim, 'center', null, wa); const p24 = eo(seg(T, t.t24 + 0.1, 0.4)); dtxt('24 / 24', 1500, 1362, 104 * (1.3 - 0.3 * p24), C.amber, 'center', na * p24);
+    }
+    // far out, the whole investigation is one small light
+    if (mapA > 0.01) { g.globalAlpha = mapA * 0.9; g.beginPath(); g.arc(X(700), Y(420), 9, 0, 6.2832); g.fillStyle = C.text; g.fill(); g.globalAlpha = 1; }
+  }
+
+  function over(g, T) { // titles and supers, in screen space
+    const ta = seg(T, 0.15, 0.5) * (1 - seg(T, 2.3, 0.9)); if (ta > 0.01) { g.globalAlpha = ta; g.fillStyle = C.text; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '800 150px ' + DISP; g.fillText('Fingerprints', W / 2, H / 2 - 10); g.font = '600 24px ' + MONO; g.fillStyle = C.dim; g.fillText('A . I .   T H I S   W E E K', W / 2, H / 2 + 100); g.globalAlpha = 1; }
+    const da = seg(T, t.depue, 0.4) * (1 - seg(T, t.depue + 4.6, 0.5)); if (da > 0.01) { g.globalAlpha = da; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = C.amber; g.fillRect(120, H - BAR - 122, 6, 78); g.font = '800 46px ' + DISP; g.fillStyle = C.text; g.fillText('Will Depue', 146, H - BAR - 86); g.font = '600 22px ' + MONO; g.fillStyle = C.dim; g.fillText('FORMER OPENAI RESEARCHER', 146, H - BAR - 52); g.globalAlpha = 1; }
+    const ea = seg(T, t.evidence + 2.6, 0.8); if (ea > 0.01) { g.globalAlpha = ea; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = '600 20px ' + MONO; g.fillStyle = C.dim; g.fillText("SOURCE: WILL DEPUE'S FORENSIC REPORT, NOVEMBER 12, 2026 · REPORTING: THE REGISTER", 120, H - BAR - 40); g.globalAlpha = 1; }
+  }
+
+  // ---------------- the score: pad, pulse and effects, written as code and rendered once ----------------
+  const BED_GAIN = 0.34;
+  function score(ac) {
+    const out = ac.createGain(), master = ac.createGain(); master.gain.value = BED_GAIN; out.connect(master).connect(ac.destination);   // no compressor: its make-up gain pushed the bed above the voice
+    const tone = (at, f, dur, o) => { o = o || {}; const os = ac.createOscillator(), gn = ac.createGain(); os.type = o.type || 'sine'; os.frequency.setValueAtTime(f, at); if (o.f1) os.frequency.exponentialRampToValueAtTime(o.f1, at + dur); if (o.det) os.detune.value = o.det; const a = o.a == null ? 0.01 : o.a, r = o.r == null ? 0.15 : o.r, gv = o.g || 0.1; gn.gain.setValueAtTime(0.0001, at); gn.gain.linearRampToValueAtTime(gv, at + a); gn.gain.setValueAtTime(gv, Math.max(at + a, at + dur - r)); gn.gain.linearRampToValueAtTime(0.0001, at + dur); let node = os.connect(gn); if (o.lp) { const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = o.lp; node = gn.connect(fl); } node.connect(out); os.start(at); os.stop(at + dur + 0.05); };
+    const nbuf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate), nd = nbuf.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = rnd(i, 11) * 2 - 1;
+    const noise = (at, dur, o) => { o = o || {}; const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), gn = ac.createGain(); s.buffer = nbuf; s.loop = true; fl.type = o.type || 'bandpass'; fl.Q.value = o.q || 0.8; fl.frequency.setValueAtTime(o.f0 || 800, at); if (o.f1) fl.frequency.exponentialRampToValueAtTime(o.f1, at + dur); const pk = o.pk == null ? 0.6 : o.pk, gv = o.g || 0.1; gn.gain.setValueAtTime(0.0001, at); gn.gain.linearRampToValueAtTime(gv, at + dur * pk); gn.gain.linearRampToValueAtTime(0.0001, at + dur); s.connect(fl).connect(gn).connect(out); s.start(at, (at * 0.37) % 1.5); s.stop(at + dur + 0.05); };
+    // pad: one chord per beat, slow in, slow out
+    const N = { G1: 49, Bb1: 58.27, C2: 65.41, D2: 73.42, F2: 87.31, G2: 98, A2: 110, Bb2: 116.54, C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, A3: 220, D4: 293.66, E4: 329.63 };
+    const chords = [['file', ['D2', 'A2', 'F3']], ['dice', ['Bb1', 'F2', 'D3']], ['chip', ['G1', 'G2', 'Bb2', 'D3']], ['print', ['D2', 'A2', 'F3']], ['search', ['F2', 'C3', 'A3']], ['match', ['C2', 'G2', 'E3']], ['bench', ['Bb1', 'F2', 'D3']], ['where', ['G1', 'G2', 'Bb2']], ['close', ['D2', 'A2', 'F3', 'E4']]];
+    chords.forEach((ch, i) => { const st = i === 0 ? 0.2 : B[ch[0]].start - 0.6, en = i < chords.length - 1 ? B[chords[i + 1][0]].start + 1.6 : V.total - 0.2; ch[1].forEach((n) => { tone(st, N[n], en - st, { type: 'triangle', g: 0.03, a: 2.2, r: 2.4, det: -5, lp: 900 }); tone(st, N[n], en - st, { type: 'triangle', g: 0.03, a: 2.2, r: 2.4, det: 6, lp: 900 }); tone(st, N[n] * 2, en - st, { g: 0.008, a: 3, r: 2.4 }); }); });
+    tone(0.3, 36.71, V.total - 0.6, { g: 0.05, a: 4, r: 4 });
+    // pulse: enters with the dice, builds through the search, falls silent for the question, returns to close
+    const step = 0.3125, pat = [146.83, 220, 174.61, 220, 146.83, 261.63, 220, 174.61]; let n = 0;
+    for (let at = t.dice; at < B.bench.end; at += step, n++) { const inten = 0.35 + 0.65 * seg(at, t.dice, t.search + 4 - t.dice); tone(at, pat[n % 8], 0.16, { g: 0.03 * inten, a: 0.005, r: 0.12, lp: 1600 }); if (n % 2 === 0) noise(at, 0.03, { type: 'highpass', f0: 5000, g: 0.012 * inten, pk: 0.1 }); }
+    for (let at = t.close + 0.2; at < V.total - 3; at += step * 2, n++) tone(at, pat[n % 8], 0.2, { g: 0.022, a: 0.005, r: 0.15, lp: 1400 });
+    // camera moves
+    noise(t.dice + 0.2, 2.2, { f0: 300, f1: 2400, g: 0.07 }); noise(B.dice.end, 3.0, { f0: 200, f1: 4200, g: 0.1 }); tone(B.dice.end + 0.6, 130, 2.4, { f1: 38, g: 0.13, a: 0.6, r: 1.0 });
+    noise(t.print + 0.1, 2.6, { f0: 3600, f1: 260, g: 0.08, pk: 0.3 }); noise(t.search + 0.2, 2.0, { f0: 500, f1: 1500, g: 0.05 }); noise(t.match + 0.2, 2.0, { f0: 500, f1: 1800, g: 0.05 }); noise(t.bench + 0.2, 1.9, { f0: 900, f1: 400, g: 0.05 });
+    noise(t.where + 0.2, 4.0, { f0: 3000, f1: 140, g: 0.1, pk: 0.25 }); tone(t.where + 0.9, 58, 3.2, { f1: 40, g: 0.16, a: 0.05, r: 2.6 }); noise(t.close + 0.2, 3.0, { f0: 240, f1: 2600, g: 0.07 });
+    // the dice
+    for (let at = t.dice + 0.5, i = 0; at < B.dice.end + 0.2; at += 0.05 + rnd(i, 4) * 0.07, i++) noise(at, 0.022, { type: 'highpass', f0: 2500 + rnd(i, 5) * 3000, g: 0.012 + rnd(i, 6) * 0.02 * (1 - seg(at, t.settle, B.dice.end - t.settle)), pk: 0.1 });
+    // the pattern
+    tone(t.pattern, 392, 1.6, { g: 0.04, a: 0.3, r: 1.0 }); tone(t.diff, 466.16, 1.4, { g: 0.04, a: 0.2, r: 0.9 });
+    for (let d = 0; d < 2.6; d += 0.13) tone(t.print + 0.45 + d, 440 + d * 120, 0.12, { g: 0.012, r: 0.1 });
+    // the search: ticks that speed up, then the lock
+    for (let at = t.tried, i = 0; at < t.lock; i++) { noise(at, 0.018, { type: 'highpass', f0: 4000, g: 0.022, pk: 0.1 }); at += lerp(0.095, 0.034, seg(at, t.tried, t.lock - t.tried)); }
+    tone(t.lock, 880, 1.3, { g: 0.07, a: 0.004, r: 1.2 }); tone(t.lock, 1318.5, 1.1, { g: 0.04, a: 0.004, r: 1.0 });
+    // six matches, then the stamp
+    [293.66, 349.23, 440, 587.33, 698.46, 880].forEach((f, i) => tone(t.match + 0.3 + i * 0.33, f, 0.3, { g: 0.05, a: 0.004, r: 0.26 }));
+    noise(t.ban + 0.1, 0.28, { type: 'lowpass', f0: 240, g: 0.3, pk: 0.05 }); tone(t.ban + 0.1, 72, 0.35, { g: 0.22, a: 0.004, r: 0.3 });
+    // the bench
+    for (let i = 0; i < 30; i += 2) tone(t.rebuilt + i * 0.05, 700 + i * 14, 0.05, { g: 0.014, r: 0.04 });
+    tone(t.rebuilt + 1.5, 659.25, 1.0, { g: 0.05, a: 0.004, r: 0.9 }); tone(t.rebuilt + 1.5, 987.77, 0.9, { g: 0.03, a: 0.004, r: 0.8 }); tone(t.older + 1.2, 116, 0.5, { type: 'triangle', f1: 82, g: 0.06, a: 0.01, r: 0.3 });
+    for (let i = 0; i < 24; i++) tone(t.wherever + 0.4 + i * 0.085, 520 + i * 16, 0.06, { g: 0.022, r: 0.05 });
+    [587.33, 880, 1174.66].forEach((f, i) => tone(t.t24 + 0.15, f, 1.6, { g: 0.045 - i * 0.01, a: 0.004, r: 1.5 }));
+    // the question, and the resolve
+    tone(t.inside, 233.08, 1.2, { g: 0.04, a: 0.1, r: 0.9 }); tone(t.rented, 349.23, 1.2, { g: 0.04, a: 0.1, r: 0.9 });
+    [146.83, 220, 329.63, 440].forEach((f) => tone(t.evidence, f, V.total - t.evidence - 0.3, { g: 0.03, a: 1.2, r: 3.0 }));
+  }
+  return { draw, over, score };
+});
+
+</script>
+<script>
+// THE ROADSHOW — one continuous shot across a page. The camera reads down a sheet of the offering's own numbers,
+// crosses to the slide people argued about, dives into its footnote, and pulls back to the whole page.
+// The page is our reading sheet (figures from Anthropic's IPO page and amended S-1), not a facsimile of the filing.
+Film.define('roadshow', function (kit) {
+  const { V, B, W, H, BAR, C, MONO, DISP, SERIF, cl, seg, eio, eo, lerp, rnd, cue, camera, synth, tools, title, credit, sup } = kit;
+  const P = { x: -800, y: -120, w: 1600, h: 2360 }, INK = '#161B2C', SOFT = '#5C6478', HL = 'rgba(255,181,71,0.55)';
+  const t = {
+    thu: cue('price', 'This Thursday'), px: cue('price', 'Seventy to'), raise: cue('raise', 'sixty-four billion'), val: cue('raise', 'one point four'),
+    rev: cue('table', 'seventeen billion'), x12: cue('table', 'up more than'), loss: cue('table', 'Net loss'), non: cue('table', 'almost twenty-two'),
+    slide: cue('slide', 'a slide that'), curve: cue('slide', 'A curve showing'), bend: cue('slide', 'bending upward'), left: cue('slide', 'A former employee'),
+    foot: cue('foot', 'read the footnote'), says: cue('foot', 'The placement'), solely: cue('foot', 'solely for'),
+    hidden: cue('close', 'None of this'), l1: cue('close', 'The loss'), l2: cue('close', 'the adjustment'), l3: cue('close', 'the footnote'), skill: cue('close', 'The skill')
+  };
+  const FX = -560, FY = 2052;   // where the footnote sits
+  const K = [
+    [0, -180, 150, 1.5], [B.price.end, -150, 250, 1.7], [B.raise.end, -120, 520, 1.6],
+    [t.rev + 0.6, -60, 900, 1.5], [B.table.end, -40, 1120, 1.5],
+    [t.curve + 1.2, 0, 1640, 1.25], [B.slide.end, 30, 1700, 1.32],
+    [t.says + 0.6, FX + 300, FY, 6.4], [B.foot.end, FX + 520, FY, 6.4],
+    [t.hidden + 3.2, 0, 1060, 0.4], [V.total, 0, 1060, 0.42]
+  ];
+  const curveY = (u) => 1960 - 40 - 300 * Math.pow(u, 2.6);   // the slide's shape: bending upward (schematic)
+
+  function draw(g, T) {
+    const c = camera(K, T), d = tools(g, c), { X, Y, S } = d; d.room('rgba(70,84,150,0.26)', 1300);
+    // ---- the sheet
+    g.save(); g.shadowColor = 'rgba(0,0,0,0.6)'; g.shadowBlur = 60; d.rr(P.x, P.y, P.w, P.h, 8, C.paper, null, 0, 1); g.restore();
+    const hl = (x, y, w, h, at) => { const p = eo(seg(T, at, 0.55)); if (p > 0) d.rr(x, y, w * p, h, 3, HL, null, 0, 1); };
+    const serif = (s, x, y, size, col, al, wt) => { const px = S(size); if (px < 5) return; g.font = (wt || 600) + ' ' + px + 'px ' + SERIF; g.fillStyle = col || INK; g.textAlign = al || 'left'; g.textBaseline = 'middle'; g.fillText(s, X(x), Y(y)); };
+    const mono = (s, x, y, size, col, al) => { const px = S(size); if (px < 5) return; g.font = '600 ' + px + 'px ' + MONO; g.fillStyle = col || SOFT; g.textAlign = al || 'left'; g.textBaseline = 'middle'; g.fillText(s, X(x), Y(y)); };
+    const rule = (y, a) => { g.globalAlpha = a == null ? 1 : a; g.fillStyle = INK; g.fillRect(X(-700), Y(y), S(1400), Math.max(1, S(2))); g.globalAlpha = 1; };
+    mono('READING SHEET · FIGURES FROM ANTHROPIC’S IPO PAGE AND AMENDED S-1', -700, -60, 17);
+    serif('Anthropic, PBC', -700, 50, 104, INK, 'left', 700); serif('Initial public offering of Class A common stock', -700, 150, 36, SOFT, 'left', 400); rule(210);
+    hl(-706, 262, 330, 62, t.thu); mono('EXPECTED FIRST TRADE', -700, 252, 19); serif('Thursday, November 19', -700, 296, 44); mono('NASDAQ', 0, 252, 19); serif('ANT', 0, 296, 44, INK, 'left', 700);
+    hl(-706, 386, 520, 96, t.px); mono('PRICE RANGE', -700, 366, 19); serif('$70 – $78 a share', -700, 432, 78, INK, 'left', 700); mono('SHARES OFFERED', 240, 366, 19); serif('825 million', 240, 432, 52);
+    hl(-706, 566, 400, 70, t.raise); mono('RAISED AT THE TOP OF THE RANGE', -700, 548, 19); serif('about $64 billion', -700, 602, 60, INK, 'left', 700); hl(-6, 566, 520, 70, t.val); mono('VALUATION', 0, 548, 19); serif('as much as $1.4 trillion', 0, 602, 60, INK, 'left', 700); rule(690);
+    serif('Third quarter, 2026', -700, 760, 50, INK, 'left', 700);
+    const row = (y, a, b, note, at, w) => { serif(a, -700, y, 40, INK, 'left', 400); hl(196, y - 30, w || 220, 60, at); serif(b, 200, y, 44, INK, 'left', 700); if (note) mono(note, 470, y, 19); g.globalAlpha = 0.25; g.fillStyle = INK; g.fillRect(X(-700), Y(y + 44), S(1400), 1); g.globalAlpha = 1; };
+    row(860, 'Revenue', '$17.0 billion', 'UP MORE THAN 12× IN A YEAR', t.rev, 262); row(960, 'Net loss', '$(23.3) billion', '', t.loss, 290); row(1060, '   of which, a non-cash charge', '$21.9 billion', 'TIED TO ITS OWN RISING VALUATION', t.non, 262); row(1160, 'Adjusted operating margin', '15%', '', 1e9, 90);
+    g.globalAlpha = eo(seg(T, t.x12, 0.5)); g.strokeStyle = C.amber; g.lineWidth = Math.max(2, S(4)); g.beginPath(); g.ellipse(X(650), Y(860), S(210), S(34), 0, 0, 6.2832 * eo(seg(T, t.x12, 0.8))); g.stroke(); g.globalAlpha = 1;
+    rule(1290);
+    // ---- the slide (redrawn as a shape, not as data)
+    serif('From the roadshow video', -700, 1360, 50, INK, 'left', 700); mono('REDRAWN: THE SHAPE OF THE SLIDE, NOT ITS DATA', -700, 1420, 19);
+    d.rr(-700, 1470, 1400, 520, 6, '#FBFAF6', '#BDB7A8', 2, 1); mono('Compute needed to train a model, over time', -660, 1520, 22, INK);
+    g.strokeStyle = '#D5D0C4'; g.lineWidth = 1; for (let i = 1; i < 5; i++) { g.beginPath(); g.moveTo(X(-660), Y(1560 + i * 80)); g.lineTo(X(660), Y(1560 + i * 80)); g.stroke(); }
+    const cp = eo(seg(T, t.curve, t.bend + 1.4 - t.curve)); if (cp > 0) { g.strokeStyle = '#C8501E'; g.lineWidth = Math.max(3, S(7)); g.lineJoin = 'round'; g.lineCap = 'round'; g.beginPath(); for (let u = 0; u <= cp; u += 0.01) { const px = X(-640 + 1280 * u), py = Y(curveY(u)); u === 0 ? g.moveTo(px, py) : g.lineTo(px, py); } g.stroke(); [0.15, 0.4, 0.62, 0.8, 0.95].forEach((u) => { if (u <= cp) { g.beginPath(); g.arc(X(-640 + 1280 * u), Y(curveY(u)), Math.max(4, S(11)), 0, 6.2832); g.fillStyle = '#C8501E'; g.fill(); } }); }
+    // the footnote: small enough to miss, until the camera goes to it
+    hl(FX + 356, FY - 11, 296, 22, t.solely - 0.2); g.font = '600 ' + S(15) + 'px ' + SERIF; if (S(15) >= 4) { g.fillStyle = INK; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText('¹ The placement of the data points on the graph [...] is solely for illustrative purposes.', X(FX), Y(FY)); } else { g.globalAlpha = 0.5; g.fillStyle = INK; g.fillRect(X(FX), Y(FY - 2), S(640), Math.max(1, S(3))); g.globalAlpha = 1; }
+    // a former employee's reaction, pinned to the slide
+    const na = eo(seg(T, t.left, 0.6)) * (1 - seg(T, t.foot + 0.6, 0.8)); if (na > 0.01) { g.save(); g.translate(X(410), Y(1700)); g.rotate(0.04); g.globalAlpha = na; g.shadowColor = 'rgba(0,0,0,0.35)'; g.shadowBlur = 24; g.fillStyle = '#FFE08A'; g.fillRect(-S(250), -S(120), S(500), S(240)); g.shadowBlur = 0; g.fillStyle = INK; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '600 ' + S(30) + 'px ' + SERIF; g.fillText('“a big factor in my', 0, -S(48)); g.fillText('decision to leave”', 0, -S(8)); g.font = '600 ' + S(17) + 'px ' + MONO; g.fillStyle = SOFT; g.fillText('A FORMER ANTHROPIC EMPLOYEE', 0, S(58)); g.restore(); g.globalAlpha = 1; }
+    // ---- all of it disclosed
+    const tick = (x, y, at, label) => { const p = eo(seg(T, at, 0.4)); if (p <= 0.01) return; g.globalAlpha = p; g.strokeStyle = C.green; g.lineWidth = Math.max(4, S(14)); g.lineCap = 'round'; g.beginPath(); g.moveTo(X(x - 60), Y(y)); g.lineTo(X(x - 20), Y(y + 44)); g.lineTo(X(x + 70), Y(y - 60)); g.stroke(); g.globalAlpha = 1; d.mono(label, x + 120, y, 62, C.text, 'left', p); };
+    tick(980, 960, t.l1, 'THE LOSS'); tick(980, 1160, t.l2, 'THE ADJUSTMENT'); tick(980, FY, t.l3, 'THE FOOTNOTE');
+    d.stamp('ALL DISCLOSED', -1500, 1060, 150, C.amber, eo(seg(T, t.skill - 0.9, 0.35)), -0.07);
+  }
+  function over(g, T) { title(g, T, 'The Roadshow'); credit(g, T, t.skill + 2.4, 'SOURCES: ANTHROPIC IPO PAGE AND AMENDED S-1 · THE SLIDE IS REDRAWN AS A SHAPE, NOT AS DATA', true); }
+  function score(ac) {
+    const s = synth(ac, 0.34), N = { D2: 73.42, A2: 110, F3: 174.61, Bb1: 58.27, F2: 87.31, D3: 146.83, G2: 98, Bb2: 116.54, C2: 65.41, E3: 164.81, A1: 55, E2: 82.41, Cs3: 138.59 };
+    [['price', ['D2', 'A2', 'F3']], ['raise', ['Bb1', 'F2', 'D3']], ['table', ['G2', 'Bb2', 'D3']], ['slide', ['C2', 'G2', 'E3']], ['foot', ['A1', 'E2']], ['close', ['D2', 'A2', 'F3']]].forEach((c, i, all) => s.pad(c[1].map((n) => N[n]), i === 0 ? 0.2 : B[c[0]].start - 0.6, i < all.length - 1 ? B[all[i + 1][0]].start + 1.6 : V.total - 0.2, c[0] === 'foot' ? 0.02 : 0.03));
+    s.tone(0.3, 36.71, V.total - 0.6, { g: 0.045, a: 4, r: 4 });
+    const pat = [146.83, 220, 174.61, 220, 146.83, 261.63, 220, 174.61]; let n = 0;
+    for (let at = B.price.start; at < t.foot; at += 0.3125, n++) { s.tone(at, pat[n % 8], 0.16, { g: 0.024, a: 0.005, r: 0.12, lp: 1600 }); if (n % 4 === 0) s.noise(at, 0.03, { type: 'highpass', f0: 5000, g: 0.01, pk: 0.1 }); }
+    // each highlighter stroke
+    [t.thu, t.px, t.raise, t.val, t.rev, t.loss, t.non].forEach((at, i) => { s.noise(at, 0.5, { f0: 1800, f1: 3200, g: 0.035, pk: 0.4 }); s.tone(at + 0.1, 440 + i * 40, 0.25, { g: 0.03, r: 0.2 }); });
+    s.bell(t.x12 + 0.3, 783.99, 0.04); s.whoosh(t.curve - 0.6, 2.0, true, 0.05); s.tone(t.curve, 196, t.bend + 1.4 - t.curve, { f1: 784, g: 0.03, a: 0.4, r: 0.3 }); s.noise(t.left, 0.12, { type: 'lowpass', f0: 900, g: 0.12, pk: 0.05 });
+    s.whoosh(t.foot + 0.2, 2.6, true, 0.09); s.tone(t.foot + 0.6, 120, 2.2, { f1: 44, g: 0.11, a: 0.5, r: 1.0 }); s.noise(t.solely - 0.2, 0.5, { f0: 1800, f1: 3200, g: 0.04, pk: 0.4 }); s.bell(t.solely + 0.3, 329.63, 0.05);
+    s.whoosh(t.hidden + 0.2, 3.2, false, 0.09); s.tone(t.hidden + 0.9, 58, 3.0, { f1: 40, g: 0.14, a: 0.05, r: 2.4 }); [t.l1, t.l2, t.l3].forEach((at, i) => s.bell(at, [293.66, 349.23, 440][i], 0.05)); s.thunk(t.skill - 0.9);
+    [73.42, 110, 174.61, 293.66].forEach((f) => s.tone(t.skill, f, V.total - t.skill - 0.3, { g: 0.03, a: 1.2, r: 3.0 }));
+  }
+  return { draw, over, score };
+});
+
+</script>
+<script>
+// 2027 AFTER ALL? — one continuous shot across a chart. The camera rides the line as it is drawn, meets the bend,
+// follows the forecast as it curls up to 2027, comes back down to the question, dives INTO the line to find two
+// strands, then pulls back to every lab at once, and ends on three ways to draw the same line.
+// Every line here is schematic: shapes that match what each source says, not plotted data.
+Film.define('after2027', function (kit) {
+  const { V, B, W, H, BAR, cl, seg, eio, eo, lerp, rnd, cue, camera, synth } = kit;
+  const C = { bg: '#080B14', text: '#EEF1F8', dim: '#8C97B2', grid: '#7F92D8', amber: '#FFB547', blue: '#6D8BFF', violet: '#C58BFF', red: '#FF6B6B', grey: '#66718C' };
+  const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace', DISP = '"Bricolage Grotesque", "Arial Narrow", Arial, sans-serif';
+  // the chart: 1000 units a year from January 2023; up is negative y
+  const m = 0.22, xb = 2830, xn = 3870, X0 = 200, TH = -2300, X27 = 4500;
+  const yA = (x) => x <= xb ? -m * x : -(m * xb + 2 * m * (x - xb)), yNow = yA(xn);
+  const curl = (x) => yNow - 2 * m * (x - xn) - 60 * (Math.exp((x - xn) / 230) - 1), ray2 = (x) => yNow - 2 * m * (x - xn), ray1 = (x) => yNow - m * (x - xn);
+  const t = {
+    a: 1.3, bend: cue('kink', 'found a bend'), twice: cue('kink', 'about twice'), agents: cue('kink', 'AI doing the research'), metr: cue('kink', 'outside auditors'), now: B.kink.end,
+    curl: cue('extend', 'It curls upward'), date: B.date.start, authors: cue('date', 'the authors'), six: cue('date', 'All six'), target: cue('date', 'an AI that'), quote: cue('date', 'I am scared'),
+    ask: B.ask.start, chalmers: cue('ask', 'David Chalmers'), how: cue('ask', 'How exactly'),
+    str: B.strands.start, easy: cue('strands', 'An easy part'), hard: cue('strands', 'And a hard part'), explode: cue('strands', 'The easy part can explode'), barely: cue('strands', 'while the hard part'),
+    sub: cue('sub', 'a sub-explosion'), wide: B.wide.start, analyst: cue('wide', 'One analyst'), looks: cue('wide', 'the line looks'), front: cue('wide', 'What changed'),
+    close: B.close.start, three: cue('close', 'Three ways'), assume: cue('close', 'find the assumption')
+  };
+  const sm = (p) => p * p * (3 - 2 * p);
+  function penX(T) { // where the pen is
+    if (T <= t.bend) return lerp(X0, xb, sm(seg(T, t.a, t.bend - t.a)));
+    if (T <= t.now) return lerp(xb, xn, sm(seg(T, t.bend + 0.5, t.now - t.bend - 0.5)));
+    if (T <= B.extend.end) return lerp(xn, 4300, Math.pow(seg(T, B.extend.start, B.extend.end - B.extend.start), 1.5));
+    return lerp(4300, 4530, sm(seg(T, B.extend.end, t.six + 1.4 - B.extend.end)));
+  }
+  const penY = (x) => x <= xn ? yA(x) : curl(x);
+  function follow(T) { // the camera rides with the pen until the question
+    const px = penX(T), py = penY(px);
+    const z = T < t.bend - 1 ? 1.5 : T < t.now ? lerp(1.5, 1.3, sm(seg(T, t.bend + 3, t.now - t.bend - 3))) : T < B.extend.end ? lerp(1.3, 0.8, sm(seg(T, t.now, B.extend.end - t.now))) : lerp(0.8, 0.6, sm(seg(T, B.extend.end, 5)));
+    const w = sm(seg(T, t.date - 1, 5)), lead = 170 / z;
+    return [lerp(px + lead, 4230, w), lerp(py - 50 / z, -1720, w), z];
+  }
+  const f0 = follow(t.ask);
+  const K = [
+    [t.ask, f0[0], f0[1], f0[2]], [t.ask + 3.4, xb + 260, yA(xb) - 120, 1.25], [B.ask.end, xb + 300, yA(xb) - 135, 1.38],
+    [t.str + 2.8, 3300, yA(3300), 24], [t.hard + 1.6, 3344, yA(3344), 24],
+    [t.explode + 2.6, 4250, -1500, 0.62], [B.sub.end, 4330, -1560, 0.6],
+    [t.wide + 3.8, 2800, -960, 0.31], [B.wide.end, 2880, -1000, 0.32],
+    [t.close + 3.0, 4380, -1480, 0.6], [V.total, 4440, -1520, 0.64]
+  ];
+  const cam = (T) => { if (T >= t.ask) return camera(K, T); const f = follow(T); return { x: f[0] + Math.sin(T * 0.31) * 7 / f[2], y: f[1] + Math.cos(T * 0.23) * 5 / f[2], z: f[2] * (1 + 0.012 * Math.sin(T * 0.17)) }; };
+  const LABS = [60, 120, 180];
+
+  function draw(g, T) {
+    const c = cam(T), X = (x) => W / 2 + (x - c.x) * c.z, Y = (y) => H / 2 + (y - c.y) * c.z, S = (l) => l * c.z;
+    const mono = (s, x, y, size, color, al, alpha) => { const px = S(size); if (px < 6 || alpha <= 0.01) return; g.globalAlpha = alpha == null ? 1 : alpha; g.font = '600 ' + px + 'px ' + MONO; g.fillStyle = color; g.textAlign = al || 'center'; g.textBaseline = 'middle'; g.fillText(s, X(x), Y(y)); g.globalAlpha = 1; };
+    const disp = (s, x, y, size, color, al, alpha) => { const px = S(size); if (px < 6 || alpha <= 0.01) return; g.globalAlpha = alpha == null ? 1 : alpha; g.font = '800 ' + px + 'px ' + DISP; g.fillStyle = color; g.textAlign = al || 'center'; g.textBaseline = 'middle'; g.fillText(s, X(x), Y(y)); g.globalAlpha = 1; };
+    const path = (fn, xa, xz, step, color, lw, alpha, dash) => { if (xz <= xa || alpha <= 0.01) return; const lo = Math.max(xa, c.x - W / c.z), hi = Math.min(xz, c.x + W / c.z); if (hi <= lo) return; g.globalAlpha = alpha; g.strokeStyle = color; g.lineWidth = lw; g.lineJoin = 'round'; g.lineCap = 'round'; g.setLineDash(dash || []); g.beginPath(); g.moveTo(X(lo), Y(fn(lo))); for (let x = lo + step; x < hi; x += step) g.lineTo(X(x), Y(fn(x))); g.lineTo(X(hi), Y(fn(hi))); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; };
+
+    // ---- the room: dark, one pool of light on the subject
+    g.fillStyle = C.bg; g.fillRect(0, 0, W, H); const sp = g.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, 1150); sp.addColorStop(0, 'rgba(58,74,150,0.30)'); sp.addColorStop(1, 'rgba(58,74,150,0)'); g.fillStyle = sp; g.fillRect(0, 0, W, H);
+    // ---- graph paper, drifting past
+    const gx = c.z < 0.4 ? 1000 : 250, hw = W / 2 / c.z, hh = H / 2 / c.z; g.strokeStyle = C.grid; g.lineWidth = 1;
+    if (c.z < 8) { for (let x = Math.floor((c.x - hw) / gx) * gx; x < c.x + hw; x += gx) { g.globalAlpha = x % 1000 === 0 ? 0.22 : 0.09; g.beginPath(); g.moveTo(X(x), 0); g.lineTo(X(x), H); g.stroke(); } for (let y = Math.floor((c.y - hh) / gx) * gx; y < c.y + hh; y += gx) { g.globalAlpha = 0.09; g.beginPath(); g.moveTo(0, Y(y)); g.lineTo(W, Y(y)); g.stroke(); } }
+    g.globalAlpha = 1;
+    const px = penX(T), py = penY(px), wideA = eo(seg(T, t.wide + 1.0, 1.4)) * (1 - seg(T, t.close, 1.4)), closeA = eo(seg(T, t.close + 0.4, 1.0)), fc = (1 - 0.72 * wideA) * (1 - closeA);   // fc: how visible the forecast drawings are
+    const split = seg(T, t.explode, 0.6), strandA = seg(c.z, 4, 10);
+
+    // ---- every lab (only in the wide view)
+    if (wideA > 0.01) {
+      LABS.forEach((off, i) => path((x) => -m * x - off - 22 * Math.sin(x / 260 + i * 2), X0, xn, 40, '#8D98B5', 5, wideA * 0.95));
+      path((x) => -m * x - 185, X0, 5300, 60, C.text, 3, wideA * 0.85 * eo(seg(T, t.looks, 1.2)), [14, 12]);
+      disp('EVERY LAB', 420, -1560, 300, C.text, 'left', wideA); mono('the frontier: the same steady climb', 5250, -m * 5250 - 185 - 170, 110, C.text, 'right', wideA * eo(seg(T, t.looks + 0.4, 0.6)));
+      const fa = wideA * eo(seg(T, t.front, 0.5)); if (fa > 0.01) { g.globalAlpha = fa; g.strokeStyle = C.amber; g.lineWidth = 4; g.beginPath(); g.arc(X(xn), Y(yNow), 26 + 5 * Math.sin(T * 5), 0, 6.2832); g.stroke(); g.globalAlpha = 1; mono('who is in front', xn + 150, yNow + 230, 120, C.amber, 'left', fa); }
+    }
+    // ---- the old pace, ghosted past the bend
+    path((x) => -m * x, xb, Math.min(xb + 1500, lerp(xb, xb + 1500, eo(seg(T, t.bend + 0.4, 2.2)))), 30, C.dim, 2.5, 0.55 * (1 - closeA) * (1 - strandA), [8, 10]);
+    mono('the old pace', xb + 760, -m * (xb + 760) + 46, 26, C.dim, 'center', 0.9 * eo(seg(T, t.twice + 0.4, 0.6)) * (1 - seg(T, t.ask + 2, 1)) * (1 - wideA));
+    // ---- the forecast: target line, date line, the curl
+    const ta = eo(seg(T, t.target, 0.8)) * fc; path(() => TH, 3700, lerp(3700, 5300, eo(seg(T, t.target, 1.4))), 200, C.text, 2.5, ta * 0.7, [4, 10]); mono('AI THAT OUT-RESEARCHES THE BEST HUMANS', 3710, TH - 56, 44, C.text, 'left', ta);
+    const da = eo(seg(T, t.six + 0.9, 0.6)) * fc; if (da > 0.01) { g.globalAlpha = da * 0.8; g.strokeStyle = C.amber; g.lineWidth = 3; g.beginPath(); g.moveTo(X(X27), Y(TH)); g.lineTo(X(X27), H); g.stroke(); g.globalAlpha = 1; disp('2027', X27 + 30, TH + 120, 150, C.amber, 'left', da); }
+    // ---- the line itself
+    const lw = cl(6 * Math.sqrt(c.z), 3.5, 9);
+    if (strandA < 1) path(yA, X0, Math.min(px, xn), 12, C.text, lw, 1 - strandA);
+    if (strandA > 0.01) { const tw = (s) => (x) => yA(x) + s * 2.2 * Math.sin(x / 7.5); path(tw(1), X0, xn, 0.4, C.amber, 9, strandA); path(tw(-1), X0, xn, 0.4, C.blue, 9, strandA); }
+    if (px > xn) path(curl, xn, px, 8, C.amber, lw, (1 - closeA) * (1 - 0.6 * wideA), split > 0.5 ? [] : [16, 13]);
+    // ---- two strands, coming apart
+    const hx = lerp(xn, 5250, eo(seg(T, t.barely, 2.6))); if (T >= t.barely) path(ray1, xn, hx, 20, C.blue, lw, (1 - closeA) * (1 - 0.6 * wideA));
+    mono('THE EASY PART', 3300, yA(3300) - 10.6, 1.7, C.amber, 'center', strandA * eo(seg(T, t.easy, 0.4))); mono('writing code, running experiments', 3300, yA(3300) - 8.0, 1.15, C.text, 'center', strandA * eo(seg(T, t.easy + 0.9, 0.4)));
+    mono('THE HARD PART', 3344, yA(3344) + 7.6, 1.7, C.blue, 'center', strandA * eo(seg(T, t.hard, 0.4))); mono('knowing which experiment is worth running', 3344, yA(3344) + 10.2, 1.15, C.text, 'center', strandA * eo(seg(T, t.hard + 0.9, 0.4)));
+    const la = (1 - strandA) * (1 - wideA) * (1 - closeA); mono('THE EASY PART', 4130, -1640, 58, C.amber, 'right', la * eo(seg(T, t.explode + 1.6, 0.5))); mono('THE HARD PART', 5240, ray1(5240) + 110, 58, C.blue, 'right', la * eo(seg(T, t.barely + 1.8, 0.5)));
+    const sa = eo(seg(T, t.sub + 0.15, 0.3)) * (1 - wideA) * (1 - closeA); if (sa > 0.01) { g.save(); g.translate(X(4930), Y(-1700)); g.rotate(-0.09); const sc = 2.3 - 1.3 * sa; g.scale(sc, sc); g.globalAlpha = sa; g.strokeStyle = C.amber; g.lineWidth = 5; g.beginPath(); g.roundRect(-S(330), -S(62), S(660), S(124), 12); g.stroke(); g.font = '800 ' + S(84) + 'px ' + DISP; g.fillStyle = C.amber; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('SUB-EXPLOSION', 0, S(4)); g.restore(); g.globalAlpha = 1; }
+    // ---- the bend, the number, the question
+    const twA = Math.max(eo(seg(T, t.twice, 0.5)) * (1 - seg(T, t.now + 2.5, 1.5)), eo(seg(T, t.ask + 2.8, 0.6)) * (1 - seg(T, t.str + 1.0, 0.8))) * (1 - strandA); disp('2×', xb + 170, yA(xb) - 215, 170 * (1.25 - 0.25 * eo(seg(T, t.twice, 0.5))), C.amber, 'center', twA); mono('INSIDE ANTHROPIC', xb + 300, yA(xb) - 232, 28, C.dim, 'left', twA * seg(T, t.twice + 0.5, 0.5));
+    mono('a steady pace', 1500, yA(1500) - 70, 30, C.dim, 'center', seg(T, cue('line', 'a steady pace') - 0.2, 0.6) * (1 - seg(T, t.ask, 1)));
+    const qa = eo(seg(T, t.how, 0.5)) * (1 - seg(T, t.str + 1.2, 0.8)); disp('?', xb + 700, yA(xb) - 215, 400 * (1 + 0.04 * Math.sin(T * 3)), C.amber, 'center', qa);
+    if (T >= t.now - 0.5 && c.z < 6) { const na = eo(seg(T, t.now - 0.5, 0.6)) * (1 - 0.5 * wideA); g.globalAlpha = na * 0.6; g.strokeStyle = C.text; g.lineWidth = 2; g.setLineDash([3, 8]); g.beginPath(); g.moveTo(X(xn), Y(yNow)); g.lineTo(X(xn), H); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; g.beginPath(); g.arc(X(xn), Y(yNow), cl(S(12), 6, 12), 0, 6.2832); g.fillStyle = C.text; g.globalAlpha = na; g.fill(); g.globalAlpha = 1; }
+    // ---- three ways to draw it
+    if (closeA > 0.01) {
+      const r = [[curl, 4530, C.amber, 'EXPLOSION', 4590, -2060, [16, 13]], [ray2, 5300, C.text, 'SUB-EXPLOSION', 5330, ray2(5300), null], [ray1, 5300, C.blue, 'STEADY', 5330, ray1(5300), null]];
+      r.forEach((q, i) => { const p = eo(seg(T, t.three + i * 0.55, 1.3)); path(q[0], xn, lerp(xn, q[1], p), 8, q[2], 7, closeA, q[6]); disp(q[3], q[4], q[5], 62, q[2], 'left', closeA * eo(seg(T, t.three + i * 0.55 + 0.9, 0.5))); });
+      path(yA, X0, xn, 12, C.text, 7, closeA);
+    }
+    // ---- the pen, and the agents that travel with it
+    if (T < t.ask + 0.6) { const pa = 1 - seg(T, t.ask - 0.4, 1), sx = X(px), sy = Y(py); const hg = g.createRadialGradient(sx, sy, 0, sx, sy, 60); hg.addColorStop(0, 'rgba(255,181,71,0.55)'); hg.addColorStop(1, 'rgba(255,181,71,0)'); g.globalAlpha = pa; g.fillStyle = hg; g.fillRect(sx - 60, sy - 60, 120, 120); g.beginPath(); g.arc(sx, sy, 9, 0, 6.2832); g.fillStyle = '#fff'; g.fill();
+      const ag = eo(seg(T, t.agents, 1.2)); if (ag > 0.01) for (let i = 0; i < 14; i++) { const a = T * (1.4 + rnd(i, 1) * 1.6) + rnd(i, 2) * 6.28, rr = (26 + rnd(i, 3) * 46) * ag; g.globalAlpha = pa * ag * (0.5 + 0.5 * rnd(i, 4)); g.beginPath(); g.arc(sx + Math.cos(a) * rr, sy + Math.sin(a) * rr * 0.7, 3.2, 0, 6.2832); g.fillStyle = C.amber; g.fill(); } g.globalAlpha = 1; }
+    // ---- the years, along the bottom edge, and the six authors' dates sliding to 2027
+    if (c.z < 6) { g.font = '600 24px ' + MONO; g.textAlign = 'center'; g.textBaseline = 'middle'; for (let k = 0; k <= 7; k++) { const sx = X(k * 1000); if (sx < -60 || sx > W + 60) continue; g.globalAlpha = 0.85; g.fillStyle = C.dim; g.fillText(String(2023 + k), sx, H - BAR - 30); g.globalAlpha = 0.5; g.fillRect(sx - 1, H - BAR - 62, 2, 14); } g.globalAlpha = 1;
+      const aa = seg(T, t.authors + 0.3, 0.6) * (1 - seg(T, t.ask + 0.5, 1)); if (aa > 0.01) { [5050, 5200, 5330, 5480, 5650, 5820].forEach((ox, i) => { const p = eio(seg(T, t.six + i * 0.12, 1.7)), wx = lerp(ox, X27 + (i - 2.5) * 30, p); g.globalAlpha = aa; g.beginPath(); g.arc(X(wx), H - BAR - 92, 11, 0, 6.2832); g.fillStyle = p > 0.9 ? C.amber : C.text; g.fill(); }); g.globalAlpha = aa * 0.9; g.font = '600 20px ' + MONO; g.fillStyle = C.dim; g.textAlign = 'left'; g.fillText("THE SIX AUTHORS' DATES", X(lerp(5050, X27, eio(seg(T, t.six, 1.7)))) - 110, H - BAR - 128); g.globalAlpha = 1; } }
+  }
+
+  function over(g, T) { // titles and supers, in screen space
+    const ta = seg(T, 0.15, 0.5) * (1 - seg(T, 2.2, 0.9)); if (ta > 0.01) { g.globalAlpha = ta; g.fillStyle = C.text; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '800 150px ' + DISP; g.fillText('2027 After All?', W / 2, H / 2 - 10); g.font = '600 24px ' + MONO; g.fillStyle = C.dim; g.fillText('A . I .   T H I S   W E E K', W / 2, H / 2 + 100); g.globalAlpha = 1; }
+    const sup = (at, len, big, small) => { const a = seg(T, at, 0.4) * (1 - seg(T, at + len, 0.5)); if (a <= 0.01) return; g.globalAlpha = a; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = C.amber; g.fillRect(120, BAR + 44, 6, 78); g.font = '800 46px ' + DISP; g.fillStyle = C.text; g.fillText(big, 146, BAR + 80); g.font = '600 22px ' + MONO; g.fillStyle = C.dim; g.fillText(small, 146, BAR + 114); g.globalAlpha = 1; };
+    sup(t.metr, 5.5, 'METR', 'INDEPENDENT ASSESSMENT · NOVEMBER 5'); sup(t.authors, 6.5, 'AI 2027', 'FORECAST UPDATED NOVEMBER 10'); sup(t.chalmers, 5.0, 'David Chalmers', 'PHILOSOPHER'); sup(t.analyst, 5.0, 'Ramez Naam', 'TECHNOLOGIST');
+    const qa = seg(T, t.quote, 0.5) * (1 - seg(T, B.date.end + 0.4, 0.6)); if (qa > 0.01) { g.globalAlpha = qa; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = '800 84px ' + DISP; g.fillStyle = C.text; g.fillText('“I am scared, sad,', 120, 500); g.fillText('and angry.”', 120, 592); g.font = '600 22px ' + MONO; g.fillStyle = C.dim; g.fillText('DANIEL KOKOTAJLO · AI 2027', 124, 640); g.globalAlpha = 1; }
+    const ea = seg(T, t.assume + 2.2, 0.8); if (ea > 0.01) { g.globalAlpha = ea; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = '600 20px ' + MONO; g.fillStyle = C.dim; g.fillText('LINES ARE SCHEMATIC, NOT DATA · SOURCES: METR, AI FUTURES PROJECT, DAVID CHALMERS, RAMEZ NAAM', 120, BAR + 60); g.globalAlpha = 1; }
+  }
+
+  const BED_GAIN = 0.34;
+  function score(ac) {
+    const { tone, noise, pad } = synth(ac, BED_GAIN), N = { E2: 82.41, F2: 87.31, A2: 110, B2: 123.47, C3: 130.81, D2: 73.42, D3: 146.83, E3: 164.81, F3: 174.61, Gs3: 207.65, A3: 220, B3: 246.94, C2: 65.41, G2: 98 };
+    const ch = [['line', ['A2', 'E3', 'C3']], ['kink', ['F2', 'C3', 'A3']], ['extend', ['D2', 'A2', 'F3']], ['date', ['E2', 'B2', 'Gs3']], ['ask', ['A2']], ['strands', ['A2', 'E3', 'C3']], ['sub', ['F2', 'C3', 'A3']], ['wide', ['C2', 'G2', 'E3']], ['close', ['A2', 'E3', 'B3']]];
+    ch.forEach((c, i) => { const st = i === 0 ? 0.2 : B[c[0]].start - 0.6, en = i < ch.length - 1 ? B[ch[i + 1][0]].start + 1.6 : V.total - 0.2; pad(c[1].map((n) => N[n]), st, en, c[0] === 'ask' ? 0.02 : 0.03); });
+    tone(0.3, 55, V.total - 0.6, { g: 0.045, a: 4, r: 4 });
+    // the pen: a pulse that travels with the line and tightens as it curls
+    const pat = [220, 261.63, 329.63, 261.63, 220, 329.63, 392, 329.63]; let n = 0;
+    for (let at = t.a; at < t.six + 1.2; n++) { const up = seg(at, t.now, t.six - t.now), inten = 0.4 + 0.6 * seg(at, t.a, t.now - t.a); tone(at, pat[n % 8] * (1 + Math.floor(up * 3) * 0.1225), 0.16, { g: 0.03 * inten, a: 0.005, r: 0.12, lp: 1700 }); if (n % 2 === 0) noise(at, 0.03, { type: 'highpass', f0: 5000, g: 0.011 * inten, pk: 0.1 }); at += lerp(0.3125, 0.17, up); }
+    for (let at = t.str + 2.8; at < B.sub.end; at += 0.3125, n++) tone(at, pat[n % 8], 0.16, { g: 0.022, a: 0.005, r: 0.12, lp: 1500 });
+    for (let at = t.close + 0.3; at < V.total - 3; at += 0.625, n++) tone(at, pat[n % 8], 0.2, { g: 0.022, a: 0.005, r: 0.15, lp: 1400 });
+    // the bend, the number, the agents
+    tone(t.bend, 392, 1.4, { g: 0.05, a: 0.05, r: 1.1 }); tone(t.twice, 523.25, 1.0, { g: 0.05, a: 0.005, r: 0.9 }); tone(t.twice, 783.99, 0.9, { g: 0.03, a: 0.005, r: 0.8 });
+    for (let i = 0; i < 14; i++) tone(t.agents + i * 0.07, 900 + rnd(i, 3) * 900, 0.07, { g: 0.012, r: 0.06 });
+    // the curl: a riser into 2027, then the hit
+    tone(t.curl - 0.5, 110, t.six + 1.3 - t.curl + 0.5, { f1: 880, g: 0.03, a: 2.0, r: 0.2, lp: 1800 }); noise(t.curl, t.six + 1.3 - t.curl, { f0: 300, f1: 5200, g: 0.06, pk: 0.92 });
+    tone(t.six + 1.3, 62, 2.6, { f1: 41, g: 0.2, a: 0.01, r: 2.2 }); noise(t.six + 1.3, 0.3, { type: 'lowpass', f0: 260, g: 0.28, pk: 0.05 }); tone(t.six + 1.35, 659.25, 2.2, { g: 0.045, a: 0.005, r: 2.0 });
+    [0, 1, 2, 3, 4, 5].forEach((i) => tone(t.six + i * 0.12 + 1.5, 880 - i * 55, 0.12, { g: 0.02, r: 0.1 }));
+    tone(t.quote, 207.65, 4.5, { g: 0.03, a: 1.0, r: 2.5 });
+    // the question: everything stops, two notes rising
+    noise(t.ask + 0.1, 2.8, { f0: 2600, f1: 240, g: 0.07, pk: 0.3 }); tone(t.how, 329.63, 0.5, { g: 0.06, a: 0.01, r: 0.4 }); tone(t.how + 0.45, 392, 1.4, { g: 0.06, a: 0.01, r: 1.2 });
+    // into the line: two strands
+    noise(t.str + 0.1, 2.8, { f0: 240, f1: 4200, g: 0.09 }); tone(t.str + 0.6, 120, 2.2, { f1: 44, g: 0.11, a: 0.5, r: 1.0 });
+    tone(t.easy, 880, 0.9, { g: 0.05, a: 0.005, r: 0.8 }); tone(t.hard, 110, 1.2, { type: 'triangle', g: 0.09, a: 0.005, r: 1.0 });
+    noise(t.explode + 0.1, 2.6, { f0: 3600, f1: 220, g: 0.08, pk: 0.3 }); tone(t.explode + 0.3, 220, 2.2, { f1: 1320, g: 0.035, a: 0.6, r: 0.4 }); tone(t.barely + 0.5, 82.41, 1.6, { type: 'triangle', g: 0.08, a: 0.01, r: 1.3 });
+    noise(t.sub + 0.15, 0.28, { type: 'lowpass', f0: 240, g: 0.3, pk: 0.05 }); tone(t.sub + 0.15, 72, 0.35, { g: 0.22, a: 0.004, r: 0.3 });
+    // every lab; then three ways
+    noise(t.wide + 0.2, 4.0, { f0: 3000, f1: 140, g: 0.1, pk: 0.25 }); tone(t.wide + 0.9, 58, 3.2, { f1: 40, g: 0.15, a: 0.05, r: 2.6 }); tone(t.front, 587.33, 0.9, { g: 0.05, a: 0.005, r: 0.8 });
+    noise(t.close + 0.2, 2.8, { f0: 240, f1: 2400, g: 0.07 }); [220, 261.63, 329.63].forEach((f, i) => tone(t.three + i * 0.55, f * 2, 1.2, { g: 0.05, a: 0.005, r: 1.0 }));
+    [110, 164.81, 246.94, 329.63].forEach((f) => tone(t.assume, f, V.total - t.assume - 0.3, { g: 0.03, a: 1.2, r: 3.0 }));
+  }
+  return { draw, over, score };
+});
+
+</script>
+<script>
+// IN THE MEETING — one continuous shot over a floor plan. The assistant (the amber dot) starts in a chat window that
+// people walk up to, then moves in: a desk with a spreadsheet, a seat at the meeting, a shop counter, a wallet, and out
+// to the street. The camera travels with it and pulls up to see it in every room at once.
+Film.define('meeting', function (kit) {
+  const { V, B, W, H, BAR, C, MONO, DISP, cl, seg, eio, eo, lerp, rnd, cue, camera, synth, tools, title, credit } = kit;
+  const t = {
+    went: cue('chat', 'You went to it'), moved: cue('room', 'it moved in'), tue: cue('room', 'On Tuesday'), board: cue('room', 'and a whiteboard'), thu: cue('room', 'On Thursday'), joins: cue('room', 'It joins'), notes: cue('room', 'takes the notes'), builds: cue('room', 'and builds the document'),
+    store: cue('store', 'opened a storefront'), claim: cue('store', 'claim its profile'), counter: cue('store', 'and put an agent'),
+    fri: cue('wallet', 'On Friday'), approve: cue('wallet', 'with your approval'), unseen: cue('wallet', 'without ever seeing'),
+    google: cue('search', 'And Google'), everyone: cue('search', 'for everyone'),
+    put: cue('close', 'Put the week'), c1: cue('close', 'sits in the meeting'), c2: cue('close', 'It keeps the books'), c3: cue('close', 'It runs the counter'), c4: cue('close', 'It holds the means'), each: cue('close', 'Each of those')
+  };
+  const ROOMS = { desk: [-860, -460, 660, 400], meet: [-140, -460, 1000, 400], till: [-860, 60, 660, 400], shop: [-140, 60, 1000, 400] };
+  const D = [[0, -1260, 0], [t.moved - 0.2, -1260, 0], [t.moved + 1.3, -880, 0], [t.tue + 0.3, -700, 0], [t.tue + 1.5, -520, -230], [t.thu - 0.2, -520, -230], [t.thu + 0.6, -170, 0], [t.thu + 1.9, 470, -152], [t.store - 0.4, 470, -152], [t.store + 0.5, 150, 0], [t.store + 1.8, 360, 290], [t.fri - 0.4, 360, 290], [t.fri + 0.5, -170, 0], [t.fri + 1.8, -520, 250], [V.total, -520, 250]];
+  const dotAt = (T) => { let i = 0; while (i < D.length - 2 && T >= D[i + 1][0]) i++; const p = eio(seg(T, D[i][0], D[i + 1][0] - D[i][0])); return [lerp(D[i][1], D[i + 1][1], p), lerp(D[i][2], D[i + 1][2], p)]; };
+  const K = [
+    [0, -1180, 0, 1.55], [B.chat.end, -1130, 0, 1.7],
+    [t.tue + 1.8, -520, -250, 1.5], [t.thu - 0.3, -500, -250, 1.55], [t.thu + 2.1, 380, -250, 1.3], [B.room.end, 400, -255, 1.38],
+    [t.store + 2.1, 380, 270, 1.38], [B.store.end, 400, 280, 1.44], [t.fri + 2.1, -520, 255, 1.5], [B.wallet.end, -510, 255, 1.55],
+    [B.search.start + 2.3, 0, 640, 1.0], [B.search.end, 0, 655, 1.03], [B.close.start + 2.8, 0, 70, 0.7], [V.total, 0, 70, 0.73]
+  ];
+  const SEATS = [0.35, 1.25, 2.2, 3.5, 4.5].map((a) => [360 + Math.cos(a) * 280, -260 + Math.sin(a) * 138]);
+
+  function draw(g, T) {
+    const c = camera(K, T), d = tools(g, c), { X, Y, S } = d; d.room('rgba(58,74,150,0.30)');
+    const closeA = eo(seg(T, t.put, 1.5)), gone = eo(seg(T, t.each + 0.3, 1.2)), [ax, ay] = dotAt(T);
+    // blueprint dots
+    g.fillStyle = C.blue; for (let x = Math.floor((c.x - 1000 / c.z) / 80) * 80; x < c.x + 1000 / c.z; x += 80) for (let y = Math.floor((c.y - 600 / c.z) / 80) * 80; y < c.y + 600 / c.z; y += 80) { g.globalAlpha = 0.16; g.fillRect(X(x) - 1.5, Y(y) - 1.5, 3, 3); } g.globalAlpha = 1;
+    const person = (x, y, a) => { if (a <= 0.01) return; d.dot(x, y, 15, C.text, a * (1 - gone)); if (gone > 0.01) { g.globalAlpha = a * gone * 0.7; g.strokeStyle = C.dim; g.lineWidth = 2; g.setLineDash([4, 5]); g.beginPath(); g.arc(X(x), Y(y), S(15), 0, 6.2832); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; } };
+    const tag = (s1, s2, x, y, at) => { const a = eo(seg(T, at, 0.5)) * (1 - closeA); d.mono(s1, x, y, 24, C.text, 'left', a); d.mono(s2, x, y + 34, 19, C.dim, 'left', a); };
+    // ---- the chat window, where it used to live
+    d.rr(-1440, -150, 360, 300, 14, C.card, C.line, 2.5, 1); d.rr(-1410, -112, 150, 34, 17, '#1E2A4D', null, 0, 1); d.rr(-1290, -62, 180, 34, 17, '#26386A', null, 0, 1); d.rr(-1410, -12, 110, 34, 17, '#1E2A4D', null, 0, 1); d.rr(-1410, 92, 300, 38, 10, null, C.line, 2, 1); d.mono('CHAT', -1410, -180, 20, C.dim, 'left', 1);
+    for (let i = 0; i < 3; i++) { const p = seg(T, t.went - 1.6 + i * 0.9, 2.4), a = Math.sin(Math.min(1, p) * Math.PI); person(lerp(-820, -1060, eo(p)) , -60 + i * 60, a * (T < t.moved + 1 ? 1 : 0)); }
+    // ---- the building
+    Object.keys(ROOMS).forEach((k) => { const r = ROOMS[k]; d.rr(r[0], r[1], r[2], r[3], 6, 'rgba(18,28,54,0.75)', C.blue, 3, 1); });
+    d.line(-860, 0, -900, 0, C.bg, 14, 1);
+    // desk: spreadsheet and whiteboard
+    const da = eo(seg(T, t.tue + 1.2, 0.6)); d.rr(-700, -360, 300, 200, 8, '#0D1428', C.line, 2, 1); for (let i = 0; i < 30; i++) { const on = T >= t.tue + 1.7 + i * 0.07; d.rr(-690 + (i % 6) * 47, -350 + Math.floor(i / 6) * 37, 42, 31, 3, on ? (i % 6 === 0 || i < 6 ? C.amber : '#30437E') : '#172244', null, 0, 1); }
+    d.rr(-380, -420, 150, 240, 6, '#E9EEF8', null, 0, 0.9); const wb = seg(T, t.board, 1.6); g.strokeStyle = '#3B4A7A'; g.lineWidth = Math.max(1.5, S(4)); g.lineCap = 'round'; for (let i = 0; i < 5; i++) { const p = cl(wb * 5 - i); if (p > 0) { g.beginPath(); g.moveTo(X(-362), Y(-390 + i * 44)); g.lineTo(X(-362 + (60 + rnd(i, 2) * 54) * p), Y(-390 + i * 44 + (i % 2 ? 8 : -6) * p)); g.stroke(); } }
+    person(-270, -110, 1); tag('A SPREADSHEET, A WHITEBOARD', 'ANTHROPIC · TUESDAY', -840, -30 - 76, t.tue + 1.4);
+    // meeting: a table, five people, one seat
+    g.globalAlpha = 1; g.beginPath(); g.ellipse(X(360), Y(-260), S(215), S(84), 0, 0, 6.2832); g.fillStyle = '#18244A'; g.fill(); g.strokeStyle = C.line; g.lineWidth = 2.5; g.stroke();
+    SEATS.forEach((s, i) => { person(s[0], s[1], 1); const talk = T >= t.joins && T < t.put && rnd(i, Math.floor(T * 2.5)) > 0.6; if (talk) { g.globalAlpha = 0.7; g.strokeStyle = C.text; g.lineWidth = 2; for (let n = 1; n <= 2; n++) { g.beginPath(); g.arc(X(s[0]), Y(s[1]), S(15 + n * 9), -0.6, 0.6); g.stroke(); } g.globalAlpha = 1; } });
+    g.globalAlpha = 0.8; g.strokeStyle = C.amber; g.lineWidth = 2; g.setLineDash([4, 5]); g.beginPath(); g.arc(X(470), Y(-152), S(19), 0, 6.2832); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+    for (let i = 0; i < 6; i++) d.rr(712 + (i % 2) * 62, -400 + Math.floor(i / 2) * 62, 54, 54, 5, i === 5 && T >= t.joins ? C.amber : '#22305C', null, 0, 1); d.mono('VIDEO CALL', 712, -430, 16, C.dim, 'left', 1);
+    const doc = seg(T, t.builds, 3.2), nt = seg(T, t.notes, 1.4); d.rr(300, -312, 120, 104, 4, '#E9EEF8', null, 0, eo(seg(T, t.notes - 0.2, 0.4))); for (let i = 0; i < 7; i++) { const p = cl((i < 2 ? nt * 2 : doc * 5) - (i < 2 ? i : i - 2)); if (p > 0) d.rr(310, -302 + i * 13, (60 + rnd(i, 5) * 40) * p, 6, 2, i < 2 ? '#3B4A7A' : '#C8501E', null, 0, 1); }
+    tag('A SEAT IN THE MEETING', 'ANTHROPIC · THURSDAY', -120, -102, t.thu + 1.6);
+    // shop: counter, awning, customers
+    d.rr(0, 300, 700, 34, 6, '#22305C', C.line, 2, 1); for (let i = 0; i < 12; i++) d.rr(-140 + i * 83.4, 448, 83.4, 12, 0, i % 2 ? C.amber : '#E9EEF8', null, 0, eo(seg(T, t.store + 0.2 + i * 0.05, 0.4)));
+    const vb = eo(seg(T, t.claim, 0.5)); if (vb > 0.01) { d.rr(520, 100, 300, 70, 10, '#121C36', C.green, 2.5, vb); d.mono('✓ VERIFIED BUSINESS', 670, 135, 21, C.green, 'center', vb); }
+    for (let i = 0; i < 3; i++) { const p = eo(seg(T, t.counter + 0.6 + i * 0.7, 1.4)); person(300 + i * 150, lerp(470, 388, p), p); }
+    tag('A STOREFRONT, AN AGENT AT THE COUNTER', 'OPENAI · TUESDAY', -120, 82, t.store + 1.6);
+    // till: a card, an approval, a token
+    d.rr(-760, 150, 300, 180, 14, '#22305C', C.line, 2.5, 1); d.rr(-730, 196, 52, 40, 6, C.amber, null, 0, 0.9); d.mono('•••• •••• •••• ••••', -730, 286, 22, C.text, 'left', 1);
+    person(-330, 330, 1); const ap = eo(seg(T, t.approve + 0.5, 0.4)); d.rr(-430, 156, 190, 66, 12, ap > 0.5 ? C.green : '#121C36', ap > 0.5 ? C.green : C.line, 2.5, eo(seg(T, t.approve - 0.2, 0.4))); d.mono(ap > 0.5 ? '✓ APPROVED' : 'APPROVE?', -335, 189, 22, ap > 0.5 ? '#07210F' : C.text, 'center', eo(seg(T, t.approve - 0.2, 0.4)));
+    const tk = seg(T, t.unseen, 1.3); if (tk > 0 && tk < 1) d.rr(lerp(-600, ax - 12, eo(tk)), lerp(250, ay - 12, eo(tk)) - 40 * Math.sin(tk * Math.PI), 24, 24, 5, C.green, null, 0, 1);
+    d.mono('CARD NUMBER: NEVER SEEN', -760, 366, 19, C.green, 'left', eo(seg(T, t.unseen + 0.6, 0.5)) * (1 - closeA)); tag('A WALLET', 'OPENAI · FRIDAY', -840, 82, t.fri + 1.6);
+    // street: search, on for everyone
+    d.line(-1300, 560, 1300, 560, C.line, 3, 1); d.line(-1300, 760, 1300, 760, C.line, 3, 1); const ga = eo(seg(T, t.google, 0.6)); d.rr(-260, 596, 520, 64, 32, '#121C36', C.blue, 3, ga); d.mono('SEARCH', -200, 628, 24, C.text, 'left', ga); g.globalAlpha = ga; g.strokeStyle = C.text; g.lineWidth = 3; g.beginPath(); g.arc(X(206), Y(624), S(11), 0, 6.2832); g.moveTo(X(214), Y(632)); g.lineTo(X(224), Y(642)); g.stroke(); g.globalAlpha = 1;
+    for (let i = 0; i < 64; i++) { const px = -1240 + i * 39.4, py = 700 + (i % 2) * 26, on = T >= t.everyone + Math.abs(px) / 1900; d.dot(px, py, 10, on ? C.amber : C.text, ga * (on ? 1 : 0.55)); }
+    d.mono('GOOGLE · GEMINI 4 HYDROGEN, SWITCHED ON FOR EVERY SEARCH USER', 0, 802, 22, C.dim, 'center', eo(seg(T, t.everyone, 0.6)) * (1 - closeA));
+    // ---- the assistant
+    const halo = g.createRadialGradient(X(ax), Y(ay), 0, X(ax), Y(ay), S(70)); halo.addColorStop(0, 'rgba(255,181,71,0.5)'); halo.addColorStop(1, 'rgba(255,181,71,0)'); g.fillStyle = halo; g.fillRect(X(ax) - S(70), Y(ay) - S(70), S(140), S(140)); d.dot(ax, ay, 17 + 2 * Math.sin(T * 4), C.amber, 1);
+    // ---- in every room at once
+    [[470, -152, t.c1, 'SITS IN THE MEETING', 360, -430], [-520, -230, t.c2, 'KEEPS THE BOOKS', -530, -430], [360, 290, t.c3, 'RUNS THE COUNTER', 360, 420], [-520, 250, t.c4, 'HOLDS THE MEANS TO PAY', -530, 420]].forEach((r) => { const a = eo(seg(T, r[2], 0.5)); if (a <= 0.01) return; d.dot(r[0], r[1], 19, C.amber, a); g.globalAlpha = a * 0.8; g.strokeStyle = C.amber; g.lineWidth = 3; g.beginPath(); g.arc(X(r[0]), Y(r[1]), S(30 + 6 * Math.sin(T * 4)), 0, 6.2832); g.stroke(); g.globalAlpha = 1; d.disp(r[3], r[4], r[5], 44, C.amber, 'center', a); });
+  }
+  function over(g, T) { title(g, T, 'In the Meeting'); credit(g, T, t.each + 3.0, 'SOURCES: ANTHROPIC, OPENAI AND GOOGLE ANNOUNCEMENTS, NOVEMBER 10 – 13, 2026', true); }
+  function score(ac) {
+    const s = synth(ac, 0.34), N = { C2: 65.41, G2: 98, E3: 164.81, A2: 110, C3: 130.81, F2: 87.31, A3: 220, D2: 73.42, F3: 174.61, G1: 49, B2: 123.47, D3: 146.83 };
+    [['chat', ['C2', 'G2', 'E3']], ['room', ['A2', 'C3', 'E3']], ['store', ['F2', 'C3', 'A3']], ['wallet', ['D2', 'A2', 'F3']], ['search', ['G1', 'G2', 'B2', 'D3']], ['close', ['C2', 'G2', 'E3']]].forEach((c, i, all) => s.pad(c[1].map((n) => N[n]), i === 0 ? 0.2 : B[c[0]].start - 0.6, i < all.length - 1 ? B[all[i + 1][0]].start + 1.6 : V.total - 0.2, 0.03));
+    s.tone(0.3, 32.7, V.total - 0.6, { g: 0.045, a: 4, r: 4 });
+    const pat = [261.63, 329.63, 392, 329.63, 261.63, 392, 493.88, 392]; let n = 0;
+    for (let at = t.moved; at < t.put; at += 0.3125, n++) { s.tone(at, pat[n % 8], 0.16, { g: 0.026, a: 0.005, r: 0.12, lp: 1700 }); if (n % 2 === 0) s.noise(at, 0.03, { type: 'highpass', f0: 5000, g: 0.01, pk: 0.1 }); }
+    for (let i = 0; i < 3; i++) s.tone(t.went - 1.4 + i * 0.9, 440, 0.2, { g: 0.03, r: 0.18 });
+    [t.moved, t.thu + 0.4, t.store + 0.3, t.fri + 0.3].forEach((at) => s.whoosh(at, 1.9, true, 0.05)); s.whoosh(B.search.start + 0.2, 2.2, false, 0.05);
+    for (let i = 0; i < 30; i += 2) s.tone(t.tue + 1.7 + i * 0.07, 620 + i * 12, 0.05, { g: 0.014, r: 0.04 }); s.noise(t.board, 1.4, { f0: 2400, f1: 3000, g: 0.02, pk: 0.5 });
+    s.bell(t.joins, 523.25, 0.05); for (let i = 0; i < 10; i++) s.noise(t.builds + i * 0.3, 0.02, { type: 'highpass', f0: 3600, g: 0.02, pk: 0.1 });
+    s.bell(t.claim, 659.25, 0.05); [0, 1, 2].forEach((i) => s.tone(t.counter + 0.9 + i * 0.7, 392 + i * 50, 0.2, { g: 0.03, r: 0.18 }));
+    s.bell(t.approve + 0.5, 783.99, 0.05); s.tone(t.unseen, 440, 1.2, { f1: 880, g: 0.03, a: 0.1, r: 0.3 });
+    for (let i = 0; i < 20; i++) s.tone(t.everyone + i * 0.05, 700 + i * 22, 0.05, { g: 0.014, r: 0.04 });
+    s.whoosh(t.put - 0.6, 3.0, false, 0.09); s.tone(t.put, 58, 3.0, { f1: 40, g: 0.14, a: 0.05, r: 2.4 }); [t.c1, t.c2, t.c3, t.c4].forEach((at, i) => s.bell(at, [261.63, 329.63, 392, 523.25][i], 0.055));
+    s.tone(t.each + 0.3, 196, 2.4, { f1: 98, g: 0.05, a: 0.2, r: 1.6 }); [65.41, 98, 164.81, 261.63].forEach((f) => s.tone(t.each + 1.2, f, V.total - t.each - 1.5, { g: 0.03, a: 1.0, r: 2.6 }));
+  }
+  return { draw, over, score };
+});
+
+</script>
+<script>
+// CHECKED BY MACHINE — one continuous shot past three audits. It starts inside a wall of proof lines and pulls back to
+// six million of them, crosses to one professor's own papers, crosses again to an audit that was itself audited, where
+// the flags rearrange into what they actually change, and pulls back to all three.
+Film.define('checked', function (kit) {
+  const { V, B, W, H, BAR, C, MONO, DISP, cl, seg, eio, eo, lerp, rnd, cue, camera, synth, tools, title, credit, sup } = kit;
+  const t = {
+    signal: cue('signal', 'a system called Signal'), dm: cue('signal', "Google DeepMind's"), six: cue('signal', 'six million lines'),
+    five: cue('test', 'Five people'), one: cue('test', 'the one percent'), bugs: cue('test', 'they put two'), caught: cue('test', 'It caught both'),
+    frank: cue('frank', 'Michael Frank'), f58: cue('frank', 'Fifty-eight'), f40: cue('frank', 'Forty had'), pub: cue('frank', 'He published'),
+    audit: cue('audit', 'an AI audit'), audited: cue('audit', 'has been audited'), held: cue('audit', 'the facts held up'), none: cue('audit', 'and none were wrong'),
+    c21: cue('but', 'only twenty-one'), c98: cue('but', 'Ninety-eight'), adj: cue('close', 'and its adjectives'), finding: cue('close', 'A finding')
+  };
+  // station A: the proof wall. 12 columns x 200 rows of lines
+  const AX = -750, AY = -380, CW = 125, RH = 3.8, ROWS = 200, COLS = 12, pct = (i) => rnd(i, 21) < 0.01, bug = (i) => i === 1123 || i === 1731;
+  // station B: 58 papers.  station C: 147 flags
+  const BX = 2300, CX = 4600, flip = (i) => rnd(i, 31) < 40 / 58;   // which papers flip is illustrative; the count is the fact
+  const flipped = []; (function () { const idx = Array.from({ length: 58 }, (_, i) => i).sort((a, b) => rnd(a, 31) - rnd(b, 31)); for (let i = 0; i < 40; i++) flipped[idx[i]] = true; })();
+  const grid0 = (i) => [CX - 10 * 62 + (i % 21) * 62, -230 + Math.floor(i / 21) * 62];
+  const cluster = (i) => { if (i < 21) return [CX - 720 + (i % 7) * 46, -70 + Math.floor(i / 7) * 46]; if (i < 119) { const j = i - 21; return [CX - 300 + (j % 14) * 46, -160 + Math.floor(j / 14) * 46]; } const j = i - 119; return [CX + 470 + (j % 7) * 46, -92 + Math.floor(j / 7) * 46]; };
+  const K = [
+    [0, AX + 150, AY + 120, 13], [t.dm + 0.4, AX + 190, AY + 132, 13.5], [t.six + 2.0, 0, -70, 0.86], [B.signal.end, 0, -70, 0.88], [B.test.end, 30, -66, 0.9],
+    [B.frank.start + 2.5, BX, 0, 0.95], [B.frank.end, BX, 16, 1.0], [B.audit.start + 2.5, CX, 0, 0.98], [B.but.end, CX, 26, 1.03],
+    [B.close.start + 3.4, BX, 70, 0.29], [V.total, BX, 70, 0.3]
+  ];
+
+  function draw(g, T) {
+    const c = camera(K, T), d = tools(g, c), { X, Y, S } = d; d.room('rgba(58,74,150,0.30)');
+    const wide = eo(seg(T, B.close.start + 1.2, 2.0));
+    // ---- A: lines of proof
+    const rpx = S(RH), r0 = Math.max(0, Math.floor((c.y - 560 / c.z - AY) / RH)), r1 = Math.min(ROWS - 1, Math.ceil((c.y + 560 / c.z - AY) / RH)), c0 = Math.max(0, Math.floor((c.x - 980 / c.z - AX) / CW)), c1 = Math.min(COLS - 1, Math.ceil((c.x + 980 / c.z - AX) / CW));
+    const built = eo(seg(T, 0.6, t.six + 1.6 - 0.6));
+    for (let r = r0; r <= r1; r++) for (let q = c0; q <= c1; q++) {
+      const i = r * COLS + q, len = 0.45 + 0.5 * rnd(i, 3), order = rnd(i, 9), x = AX + q * CW, y = AY + r * RH; if (order > built * 1.05 && c.z < 6) continue;
+      const isBug = bug(i) && T >= t.bugs, got = isBug && T >= t.caught, isPct = pct(i) && T >= t.one + rnd(i, 4) * 0.8;
+      g.globalAlpha = isBug || isPct ? 1 : 0.75; g.fillStyle = isBug ? (got ? C.green : C.red) : isPct ? C.amber : '#5F78D8';
+      if (rpx < 8) g.fillRect(X(x), Y(y), S(CW * 0.9 * len), Math.max(1.2, rpx * (isBug || isPct ? 0.95 : 0.6)));
+      else { g.fillRect(X(x + 14), Y(y + RH * 0.3), S((CW - 34) * len), rpx * 0.34); g.font = '600 ' + rpx * 0.42 + 'px ' + MONO; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = C.dim; g.fillText(String(i * 2500 + 1).padStart(7, '0'), X(x + 1), Y(y + RH * 0.47)); if (T >= 1.2 + order * 3) { g.fillStyle = C.green; g.fillText('✓', X(x + CW - 14), Y(y + RH * 0.47)); } }
+    }
+    g.globalAlpha = 1;
+    [1123, 1731].forEach((i) => { const a = eo(seg(T, t.caught, 0.4)) * (1 - wide); if (a <= 0.01 || c.z > 6) return; const x = AX + (i % COLS) * CW + 50, y = AY + Math.floor(i / COLS) * RH + 2; g.globalAlpha = a; g.strokeStyle = C.green; g.lineWidth = 3; g.beginPath(); g.arc(X(x), Y(y), 30 + 5 * Math.sin(T * 5), 0, 6.2832); g.stroke(); g.globalAlpha = 1; d.mono('CAUGHT', x + 50, y, 22, C.green, 'left', a); });
+    const la = seg(c.z, 4, -2.5) * (1 - wide), n6 = Math.round(6e6 * eo(seg(T, t.six - 0.5, 2.6))); d.disp(n6.toLocaleString('en-US'), AX, AY - 96, 110, C.text, 'left', la * seg(T, t.six - 0.5, 0.5)); d.mono('LINES OF MATHEMATICAL PROOF · SIGNAL’S WORKING CODE', AX + 760, AY - 84, 24, C.dim, 'left', la * seg(T, t.six + 0.3, 0.5));
+    d.mono('READ BY PEOPLE: THE 1% THAT MATTERED', AX, -AY + 44, 26, C.amber, 'left', la * eo(seg(T, t.one, 0.5))); d.mono('TWO OLD BUGS PUT BACK IN', AX + 760, -AY + 44, 26, T >= t.caught ? C.green : C.red, 'left', la * eo(seg(T, t.bugs, 0.5)));
+    // ---- B: one professor's own papers
+    const ba = seg(T, B.frank.start + 0.6, 0.8); if (ba > 0.01) for (let i = 0; i < 58; i++) {
+      const x = BX - 5 * 112 + 136 + (i % 10) * 112, y = -430 + Math.floor(i / 10) * 124, p = eo(seg(T, t.f40 + (i % 10) * 0.05 + Math.floor(i / 10) * 0.12, 0.45)), on = flipped[i] && p > 0, sx = flipped[i] ? Math.abs(Math.cos(p * Math.PI)) : 1, a = ba * eo(seg(T, B.frank.start + 1.4 + i * 0.03, 0.3));
+      if (a <= 0.01) continue; g.globalAlpha = a; g.fillStyle = on && p > 0.5 ? C.amber : '#E9EEF8'; g.beginPath(); g.roundRect(X(x) - S(42) * sx, Y(y), S(84) * sx, S(108), 4); g.fill(); if (sx > 0.5) { g.fillStyle = on && p > 0.5 ? '#7A4A00' : '#9AA6C4'; for (let l = 0; l < 5; l++) g.fillRect(X(x) - S(30) * sx, Y(y + 16 + l * 17), S(40 + rnd(i, l) * 20) * sx, Math.max(1, S(5))); }
+    }
+    g.globalAlpha = 1; const p40 = eo(seg(T, t.f40 + 1.0, 0.5)); d.disp('40 of 58', BX - 470, 392, 110 * (1.25 - 0.25 * p40), C.amber, 'left', p40 * (1 - wide)); d.mono('HAD AT LEAST ONE NUMBER THAT COULD NOT BE REPRODUCED', BX + 20, 376, 23, C.text, 'left', p40 * (1 - wide)); d.mono('HE PUBLISHED THE RESULTS', BX + 20, 414, 23, C.green, 'left', eo(seg(T, t.pub, 0.5)) * (1 - wide));
+    // ---- C: the audit of the audit
+    const ca = seg(T, B.audit.start + 0.6, 0.8), mv = eio(seg(T, t.c21 - 0.3, 1.8)); if (ca > 0.01) for (let i = 0; i < 147; i++) {
+      const a0 = grid0(i), b0 = cluster(i), x = lerp(a0[0], b0[0], mv), y = lerp(a0[1], b0[1], mv), ok = i < 131 && T >= t.held + i * 0.009, rest = i >= 131 && T >= t.none;
+      const col = mv > 0.5 ? (i < 21 ? C.amber : i < 119 ? C.blue : '#7C899B') : ok ? C.green : rest ? '#7C899B' : '#3A476E'; d.dot(x, y, 19, col, ca * eo(seg(T, B.audit.start + 0.8 + i * 0.006, 0.3)));
+    }
+    const h1 = (1 - mv) * (1 - wide); d.disp('131', CX - 640, 300, 110, C.green, 'left', h1 * eo(seg(T, t.held + 0.8, 0.5))); d.mono('OF 147 FLAGS: EVERY CHECKABLE FACT WAS RIGHT', CX - 420, 290, 24, C.text, 'left', h1 * eo(seg(T, t.held + 0.8, 0.5))); d.disp('0 WRONG', CX + 300, 300, 110, C.text, 'left', h1 * eo(seg(T, t.none, 0.5)));
+    const lab = (s1, s2, x, at, col) => { const a = mv * eo(seg(T, at, 0.5)) * (1 - wide); d.disp(s1, x, 290, 120, col, 'center', a); d.mono(s2, x, 380, 22, C.text, 'center', a); };
+    lab('21', 'CHANGE A HEADLINE NUMBER', CX - 580, t.c21 + 0.6, C.amber); lab('98', 'ARGUMENTS ABOUT METHOD', CX, t.c98, C.blue); lab('28', 'CHANGE NOTHING, OR UNCHECKED', CX + 610, t.c98 + 1.2, '#9AA6C4');
+    // ---- all three
+    [['PROVED', 0], ['REPRODUCED?', BX], ['AUDITED TWICE', CX]].forEach((s, i) => d.disp(s[0], s[1], 760, 190, C.text, 'center', wide * eo(seg(T, B.close.start + 2.6 + i * 0.3, 0.6))));
+    d.stamp('A FINDING IS NOT A JUDGMENT', BX, -900, 260, C.amber, eo(seg(T, t.finding + 0.3, 0.35)), -0.03);
+  }
+  function over(g, T) {
+    title(g, T, 'Checked by Machine'); sup(g, T, t.dm, 5.5, 'Google DeepMind', 'FORMAL VERIFICATION OF SIGNAL · NOVEMBER 10'); sup(g, T, t.frank, 5.0, 'Michael Frank', 'PSYCHOLOGIST, STANFORD'); sup(g, T, t.audited, 5.5, 'SaneCite', 'VIA MARGINAL REVOLUTION · NOVEMBER 10');
+    credit(g, T, t.finding + 2.6, 'SOURCES: GOOGLE DEEPMIND · MICHAEL FRANK’S BLOG · SANECITE VIA MARGINAL REVOLUTION. WHICH PAPERS AND LINES LIGHT UP IS ILLUSTRATIVE; THE COUNTS ARE THE FACTS.', true);
+  }
+  function score(ac) {
+    const s = synth(ac, 0.34), N = { B1: 61.74, Fs2: 92.5, D3: 146.83, G2: 98, B2: 123.47, E2: 82.41, G3: 196, A2: 110, Cs3: 138.59, E3: 164.81, D2: 73.42, Fs3: 185 };
+    [['signal', ['B1', 'Fs2', 'D3']], ['test', ['G2', 'B2', 'D3']], ['frank', ['E2', 'B2', 'G3']], ['audit', ['A2', 'Cs3', 'E3']], ['but', ['D2', 'A2', 'Fs3']], ['close', ['B1', 'Fs2', 'D3']]].forEach((c, i, all) => s.pad(c[1].map((n) => N[n]), i === 0 ? 0.2 : B[c[0]].start - 0.6, i < all.length - 1 ? B[all[i + 1][0]].start + 1.6 : V.total - 0.2, 0.03));
+    s.tone(0.3, 30.87, V.total - 0.6, { g: 0.045, a: 4, r: 4 });
+    const pat = [246.94, 293.66, 369.99, 293.66, 246.94, 369.99, 440, 369.99]; let n = 0;
+    for (let at = B.signal.start; at < B.but.end; at += 0.3125, n++) { s.tone(at, pat[n % 8], 0.16, { g: 0.024, a: 0.005, r: 0.12, lp: 1700 }); if (n % 2 === 0) s.noise(at, 0.03, { type: 'highpass', f0: 5000, g: 0.01, pk: 0.1 }); }
+    for (let at = 1.2; at < t.six + 1.6;) { s.noise(at, 0.016, { type: 'highpass', f0: 4200, g: 0.016, pk: 0.1 }); at += lerp(0.12, 0.03, seg(at, 1.2, t.six)); }
+    s.whoosh(t.six - 0.6, 3.0, false, 0.09); s.tone(t.six, 58, 3.0, { f1: 40, g: 0.14, a: 0.05, r: 2.4 }); s.bell(t.six + 2.0, 587.33, 0.05);
+    for (let i = 0; i < 12; i++) s.tone(t.one + i * 0.07, 800 + rnd(i, 2) * 500, 0.06, { g: 0.014, r: 0.05 }); s.tone(t.bugs + 0.2, 150, 0.4, { type: 'triangle', f1: 110, g: 0.07, r: 0.3 }); s.tone(t.bugs + 0.7, 150, 0.4, { type: 'triangle', f1: 110, g: 0.07, r: 0.3 }); s.bell(t.caught, 659.25, 0.05); s.bell(t.caught + 0.25, 880, 0.05);
+    s.whoosh(B.frank.start + 0.2, 2.2, true, 0.06); for (let i = 0; i < 40; i += 2) s.tone(t.f40 + i * 0.03, 500 + i * 12, 0.05, { g: 0.014, r: 0.04 }); s.bell(t.f40 + 1.0, 440, 0.05); s.bell(t.pub, 587.33, 0.045);
+    s.whoosh(B.audit.start + 0.2, 2.2, true, 0.06); for (let i = 0; i < 131; i += 6) s.tone(t.held + i * 0.009, 620 + i * 3, 0.05, { g: 0.012, r: 0.04 }); s.bell(t.none, 783.99, 0.05);
+    s.noise(t.c21 - 0.3, 1.8, { f0: 600, f1: 2200, g: 0.05, pk: 0.5 }); s.bell(t.c21 + 0.6, 440, 0.05); s.bell(t.c98, 329.63, 0.05);
+    s.whoosh(B.close.start + 0.3, 3.4, false, 0.09); s.tone(B.close.start + 1.0, 58, 3.0, { f1: 40, g: 0.14, a: 0.05, r: 2.4 }); s.thunk(t.finding + 0.3); [61.74, 92.5, 146.83, 246.94].forEach((f) => s.tone(t.finding + 1, f, V.total - t.finding - 1.3, { g: 0.03, a: 1.0, r: 2.6 }));
+  }
+  return { draw, over, score };
+});
+
+</script>
+<script>Film.boot();</script>
+</body>
+</html>
